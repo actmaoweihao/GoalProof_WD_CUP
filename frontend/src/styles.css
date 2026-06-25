@@ -33,6 +33,8 @@ code, pre { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
 .site-header nav a:hover, .site-header nav a.active { color: var(--ink); border-color: var(--acid); }
 .header-actions { justify-self: end; display: flex; align-items: center; gap: 10px; }
 .network-pill { color: var(--mint); background: rgba(98, 226, 173, .08); border: 1px solid rgba(98, 226, 173, .2); border-radius: 99px; padding: 8px 11px; font: 500 9px "DM Mono"; text-transform: uppercase; }
+.wallet-action { position: relative; display: flex; justify-content: flex-end; }
+.wallet-error { position: absolute; top: calc(100% + 8px); right: 0; z-index: 5; width: min(320px, 78vw); padding: 10px 12px; color: #ffe3df; background: rgba(255, 130, 110, .12); border: 1px solid rgba(255, 130, 110, .35); border-radius: 8px; font-size: 12px; line-height: 1.5; box-shadow: 0 16px 40px rgba(0, 0, 0, .24); }
 .wallet-chip { color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 9px 13px; cursor: pointer; font: 500 11px "DM Mono"; }
 .status-dot { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 9px var(--acid); }
 .network-banner { padding: 11px 24px; text-align: center; color: #241206; background: var(--acid); font-size: 12px; font-weight: 700; }
