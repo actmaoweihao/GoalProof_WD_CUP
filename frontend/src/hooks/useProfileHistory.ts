@@ -9,6 +9,9 @@ const committedEvent = parseAbiItem(
 const revealedEvent = parseAbiItem(
   "event PredictionRevealed(uint256 indexed matchId, address indexed user, uint8 predictedHomeScore, uint8 predictedAwayScore, uint8 pointsAwarded)"
 );
+const reasonCommittedEvent = parseAbiItem(
+  "event PredictionReasonCommitted(uint256 indexed matchId, address indexed user, bytes32 reasonHash)"
+);
 
 export function useProfileHistory(user?: Address) {
   const client = usePublicClient();
@@ -18,7 +21,7 @@ export function useProfileHistory(user?: Address) {
     refetchInterval: 5_000,
     queryFn: async () => {
       if (!client || !user) return [];
-      const [commits, reveals] = await Promise.all([
+      const [commits, reveals, reasonCommits] = await Promise.all([
         client.getLogs({
           address: goalProofAddress,
           event: committedEvent,
@@ -30,16 +33,26 @@ export function useProfileHistory(user?: Address) {
           event: revealedEvent,
           args: { user },
           fromBlock: deploymentBlock
+        }),
+        client.getLogs({
+          address: goalProofAddress,
+          event: reasonCommittedEvent,
+          args: { user },
+          fromBlock: deploymentBlock
         })
       ]);
       const revealsByMatch = new Map(
         reveals.map((log) => [log.args.matchId!.toString(), log.args])
+      );
+      const reasonHashByMatch = new Map(
+        reasonCommits.map((log) => [log.args.matchId!.toString(), log.args.reasonHash!])
       );
       return commits
         .map((log) => ({
           matchId: log.args.matchId!,
           commitment: log.args.commitment!,
           committedAt: log.args.committedAt!,
+          reasonHash: reasonHashByMatch.get(log.args.matchId!.toString()),
           reveal: revealsByMatch.get(log.args.matchId!.toString())
         }))
         .reverse();

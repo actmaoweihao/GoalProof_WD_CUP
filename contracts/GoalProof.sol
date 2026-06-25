@@ -32,6 +32,7 @@ contract GoalProof is AccessControl, Pausable {
 
     struct Prediction {
         bytes32 commitment;
+        bytes32 reasonHash;
         uint64 committedAt;
         uint64 revealedAt;
         uint8 predictedHomeScore;
@@ -50,6 +51,7 @@ contract GoalProof is AccessControl, Pausable {
     error CommitPeriodClosed(uint256 matchId);
     error PredictionAlreadyCommitted(uint256 matchId, address user);
     error ZeroCommitment();
+    error ZeroReasonHash();
     error MatchNotStarted(uint256 matchId);
     error ResultAlreadySubmitted(uint256 matchId);
     error ResultNotSubmitted(uint256 matchId);
@@ -73,6 +75,11 @@ contract GoalProof is AccessControl, Pausable {
         address indexed user,
         bytes32 commitment,
         uint64 committedAt
+    );
+    event PredictionReasonCommitted(
+        uint256 indexed matchId,
+        address indexed user,
+        bytes32 reasonHash
     );
     event ResultSubmitted(
         uint256 indexed matchId,
@@ -157,6 +164,24 @@ contract GoalProof is AccessControl, Pausable {
 
     /// @notice Stores one opaque prediction commitment for the caller before the deadline.
     function commitPrediction(uint256 matchId, bytes32 commitment) external whenNotPaused {
+        _commitPrediction(matchId, commitment, bytes32(0));
+    }
+
+    /// @notice Stores one opaque prediction commitment plus an optional off-chain reason hash.
+    function commitPredictionWithReason(
+        uint256 matchId,
+        bytes32 commitment,
+        bytes32 reasonHash
+    ) external whenNotPaused {
+        if (reasonHash == bytes32(0)) revert ZeroReasonHash();
+        _commitPrediction(matchId, commitment, reasonHash);
+    }
+
+    function _commitPrediction(
+        uint256 matchId,
+        bytes32 commitment,
+        bytes32 reasonHash
+    ) private {
         MatchData storage matchData = _activeMatch(matchId);
         if (block.timestamp >= matchData.commitDeadline) revert CommitPeriodClosed(matchId);
         if (commitment == bytes32(0)) revert ZeroCommitment();
@@ -167,8 +192,12 @@ contract GoalProof is AccessControl, Pausable {
         }
 
         prediction.commitment = commitment;
+        prediction.reasonHash = reasonHash;
         prediction.committedAt = uint64(block.timestamp);
         emit PredictionCommitted(matchId, msg.sender, commitment, uint64(block.timestamp));
+        if (reasonHash != bytes32(0)) {
+            emit PredictionReasonCommitted(matchId, msg.sender, reasonHash);
+        }
     }
 
     /// @notice Records the immutable final score after kickoff.

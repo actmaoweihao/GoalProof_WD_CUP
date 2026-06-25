@@ -3,6 +3,7 @@ import type { Hex } from "viem";
 import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { goalProofAbi } from "../abi";
 import { configuredChainId, goalProofAddress } from "../config/deployment";
+import { analyzePredictionReason, buildPostMatchReview } from "../lib/aiReason";
 import { isBytes32 } from "../lib/commitment";
 import { WRITE_GAS_LIMITS } from "../lib/gas";
 import {
@@ -15,9 +16,15 @@ import { TransactionStatus } from "./TransactionStatus";
 
 export function RevealPanel({
   matchId,
+  chainReasonHash,
+  actualHomeScore,
+  actualAwayScore,
   onConfirmed
 }: {
   matchId: bigint;
+  chainReasonHash?: Hex;
+  actualHomeScore?: number;
+  actualAwayScore?: number;
   onConfirmed: () => void;
 }) {
   const { address } = useAccount();
@@ -31,6 +38,22 @@ export function RevealPanel({
   const { writeContractAsync, data: hash, isPending, error } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash, query: { enabled: Boolean(hash) } });
   const confirmationNotified = useRef(false);
+  const reasonAnalysis = secret?.reason ? analyzePredictionReason(secret.reason, home, away) : null;
+  const reasonHashMatches = Boolean(
+    secret?.reasonHash &&
+    chainReasonHash &&
+    secret.reasonHash.toLowerCase() === chainReasonHash.toLowerCase()
+  );
+  const review =
+    reasonAnalysis && actualHomeScore !== undefined && actualAwayScore !== undefined
+      ? buildPostMatchReview({
+          analysis: reasonAnalysis,
+          predictedHomeScore: home,
+          predictedAwayScore: away,
+          actualHomeScore,
+          actualAwayScore
+        })
+      : null;
 
   useEffect(() => {
     if (receipt.isSuccess && !confirmationNotified.current) {
@@ -126,6 +149,24 @@ export function RevealPanel({
           placeholder="0x…64 hex characters"
         />
       </label>
+      {secret?.reason && reasonAnalysis && (
+        <div className="ai-reason-card">
+          <div>
+            <span className="ai-badge">AI REVIEW</span>
+            <strong>赛前理由证明</strong>
+          </div>
+          <p>{secret.reason}</p>
+          <div className="tag-row">
+            {reasonAnalysis.tags.map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+            <span className={reasonHashMatches ? "tag-ok" : "tag-warn"}>
+              {reasonHashMatches ? "理由哈希匹配链上记录" : "未确认链上理由哈希"}
+            </span>
+          </div>
+          {review && <small>{review}</small>}
+        </div>
+      )}
       <div className="button-row">
         <button className="button button-secondary" onClick={downloadRecovery} disabled={!secret}>
           导出恢复文件

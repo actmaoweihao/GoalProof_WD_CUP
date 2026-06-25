@@ -86,6 +86,7 @@ export function ProfilePage() {
             <div>
               <span>{formatKickoff(item.committedAt)}</span>
               <code>{item.commitment.slice(0, 12)}…</code>
+              {item.reasonHash && <code>AI {item.reasonHash.slice(0, 12)}…</code>}
             </div>
             <b>{item.reveal ? `+${Number(item.reveal.pointsAwarded)} 分` : "等待公开"}</b>
           </article>

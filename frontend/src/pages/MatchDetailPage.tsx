@@ -16,6 +16,9 @@ export function MatchDetailPage() {
   const hasCommitment = Boolean(
     prediction?.commitment && prediction.commitment !== `0x${"0".repeat(64)}`
   );
+  const hasReasonHash = Boolean(
+    prediction?.reasonHash && prediction.reasonHash !== `0x${"0".repeat(64)}`
+  );
   return (
     <section className="page-section detail-page">
       <Link className="text-link" to="/matches">
@@ -80,15 +83,24 @@ export function MatchDetailPage() {
           <div>
             <div className="eyebrow">ON-CHAIN COMMITMENT</div>
             <h2>预测已密封</h2>
-            <p>链上只能看到下面的哈希；比分仍保留在你的浏览器中。</p>
+            <p>
+              链上只能看到下面的承诺哈希
+              {hasReasonHash ? "和预测理由哈希" : ""}；比分仍保留在你的浏览器中。
+            </p>
           </div>
-          <code>{prediction?.commitment}</code>
+          <div className="receipt-code-stack">
+            <code>{prediction?.commitment}</code>
+            {hasReasonHash && <code>{prediction?.reasonHash}</code>}
+          </div>
         </section>
       )}
       {address && phase === "REVEAL_OPEN" && !prediction?.revealed && (
         <RevealPanel
           key={`${address}-${matchId}-reveal`}
           matchId={matchId}
+          chainReasonHash={prediction?.reasonHash}
+          actualHomeScore={match.resultSubmitted ? match.actualHomeScore : undefined}
+          actualAwayScore={match.resultSubmitted ? match.actualAwayScore : undefined}
           onConfirmed={() => void refetch()}
         />
       )}

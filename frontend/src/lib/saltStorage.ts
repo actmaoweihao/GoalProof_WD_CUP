@@ -11,6 +11,11 @@ export type StoredPredictionSecret = {
   predictedAwayScore: number;
   salt: Hex;
   commitment: Hex;
+  reason?: string;
+  reasonHash?: Hex;
+  aiTags?: string[];
+  aiSummary?: string;
+  aiRiskLevel?: string;
   createdAt: string;
   transactionHash?: Hex;
 };
@@ -44,6 +49,13 @@ export function validateSecret(value: unknown): StoredPredictionSecret {
   }
   if (!item.salt || !isBytes32(item.salt)) throw new Error("Invalid 32-byte salt.");
   if (!item.commitment || !isBytes32(item.commitment)) throw new Error("Invalid commitment.");
+  if (item.reasonHash && !isBytes32(item.reasonHash)) throw new Error("Invalid reason hash.");
+  if (item.reason !== undefined && typeof item.reason !== "string") {
+    throw new Error("Invalid prediction reason.");
+  }
+  if (item.aiTags !== undefined && !Array.isArray(item.aiTags)) {
+    throw new Error("Invalid AI tags.");
+  }
   if (!item.createdAt || Number.isNaN(Date.parse(item.createdAt))) {
     throw new Error("Invalid creation timestamp.");
   }
@@ -60,6 +72,11 @@ export function validateSecret(value: unknown): StoredPredictionSecret {
     predictedAwayScore: Number(item.predictedAwayScore),
     salt: item.salt,
     commitment: item.commitment,
+    reason: item.reason,
+    reasonHash: item.reasonHash,
+    aiTags: item.aiTags?.map(String),
+    aiSummary: item.aiSummary ? String(item.aiSummary) : undefined,
+    aiRiskLevel: item.aiRiskLevel ? String(item.aiRiskLevel) : undefined,
     createdAt: item.createdAt,
     transactionHash: item.transactionHash
   };

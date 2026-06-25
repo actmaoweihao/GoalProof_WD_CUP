@@ -21,7 +21,10 @@ const create = await (
 ).wait();
 const salt = keccak256(toUtf8Bytes("gas-snapshot"));
 const commitment = await goalProof.computeCommitment(alice.address, 1, 2, 0, salt);
-const commit = await (await goalProof.connect(alice).commitPrediction(1, commitment)).wait();
+const reasonHash = keccak256(toUtf8Bytes("gas-snapshot-reason"));
+const commit = await (
+  await goalProof.connect(alice).commitPredictionWithReason(1, commitment, reasonHash)
+).wait();
 await networkHelpers.time.increaseTo(kickoffTime);
 const result = await (await goalProof.connect(oracle).submitResult(1, 2, 0)).wait();
 const reveal = await (await goalProof.connect(alice).revealPrediction(1, 2, 0, salt)).wait();
@@ -33,7 +36,7 @@ const report = {
   qualification: "Classroom measurements only; not production cost estimates.",
   functions: {
     createMatch: create!.gasUsed.toString(),
-    commitPrediction: commit!.gasUsed.toString(),
+    commitPredictionWithReason: commit!.gasUsed.toString(),
     submitResult: result!.gasUsed.toString(),
     revealPrediction: reveal!.gasUsed.toString()
   }

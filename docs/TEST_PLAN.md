@@ -4,11 +4,12 @@
 
 ## 自动化测试
 
-合约测试覆盖 62 个场景：
+合约测试覆盖 64 个场景：
 
 - 角色权限
 - 比赛创建和取消
 - commit 提交限制
+- AI 理由哈希提交和零哈希拒绝
 - 预言机提交赛果
 - reveal 验证
 - 计分规则
@@ -16,9 +17,10 @@
 - TypeScript 与 Solidity commitment 向量一致性
 - Alice/Bob 端到端流程
 
-前端测试覆盖 20 个场景：
+前端测试覆盖 24 个场景：
 
 - commitment 编码
+- AI 理由规范化、reasonHash、标签分析和赛后复盘
 - salt 生成和本地存储
 - 恢复文件导入/导出校验
 - 比赛阶段判断
@@ -63,7 +65,8 @@ pnpm contracts:gas
 - [ ] 管理员钱包能创建未来比赛。
 - [ ] 没权限的钱包不能创建比赛。
 - [ ] 用户能在 commit 阶段提交预测。
-- [ ] commit 交易里只出现 commitment 哈希，不出现明文比分。
+- [ ] commit 交易里只出现 commitment 和 reasonHash，不出现明文比分或明文理由。
+- [ ] AI 理由卡片能显示标签、风险等级和赛后复盘。
 - [ ] salt 恢复文件能导出。
 - [ ] 推进时间后，预言机能提交赛果。
 - [ ] 用户能 reveal，且 exact score 得 5 分。

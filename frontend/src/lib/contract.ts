@@ -13,6 +13,7 @@ export type MatchData = {
 
 export type PredictionData = {
   commitment: `0x${string}`;
+  reasonHash: `0x${string}`;
   committedAt: bigint;
   revealedAt: bigint;
   predictedHomeScore: number;
@@ -45,11 +46,12 @@ export function normalizePrediction(value: unknown): PredictionData | undefined 
   const tuple = value as readonly unknown[];
   return {
     commitment: String(named.commitment ?? tuple[0]) as `0x${string}`,
-    committedAt: BigInt((named.committedAt as bigint) ?? (tuple[1] as bigint)),
-    revealedAt: BigInt((named.revealedAt as bigint) ?? (tuple[2] as bigint)),
-    predictedHomeScore: Number(named.predictedHomeScore ?? tuple[3]),
-    predictedAwayScore: Number(named.predictedAwayScore ?? tuple[4]),
-    pointsAwarded: Number(named.pointsAwarded ?? tuple[5]),
-    revealed: Boolean(named.revealed ?? tuple[6])
+    reasonHash: String(named.reasonHash ?? tuple[1]) as `0x${string}`,
+    committedAt: BigInt((named.committedAt as bigint) ?? (tuple[2] as bigint)),
+    revealedAt: BigInt((named.revealedAt as bigint) ?? (tuple[3] as bigint)),
+    predictedHomeScore: Number(named.predictedHomeScore ?? tuple[4]),
+    predictedAwayScore: Number(named.predictedAwayScore ?? tuple[5]),
+    pointsAwarded: Number(named.pointsAwarded ?? tuple[6]),
+    revealed: Boolean(named.revealed ?? tuple[7])
   };
 }

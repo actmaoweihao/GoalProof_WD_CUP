@@ -11,6 +11,8 @@ flowchart LR
   Oracle[预言机钱包] -->|提交最终赛果| Contract
   Frontend[React + wagmi + viem] -->|读取合约状态和事件| Contract
   Frontend -->|保存 salt 和恢复文件| Local[(浏览器 localStorage)]
+  Frontend -->|本地分析预测理由| AI[Local AI Reason Analyzer]
+  AI -->|reasonHash| Contract
   Contract -->|ScoreAwarded / PredictionRevealed| Board[前端排行榜聚合]
 ```
 
@@ -19,7 +21,8 @@ flowchart LR
 - 合约负责所有关键规则，前端只负责展示和交易发起。
 - 不接收 ETH，不发行代币，不做投注。
 - 排行榜不在合约内排序，避免链上循环和高 gas。
-- 预测 salt 只保存在用户浏览器本地，永远不在 commit 阶段上链。
+- 预测 salt 和明文预测理由只保存在用户浏览器本地，永远不在 commit 阶段上链。
+- AI 理由分析完全在前端本地运行，不依赖外部模型 API；链上只保存 `reasonHash` 用于证明理由赛前存在。
 
 ## 合约边界
 
@@ -49,11 +52,12 @@ sequenceDiagram
     participant C as GoalProof 合约
     participant O as 预言机
 
-    U->>F: 输入预测比分
+    U->>F: 输入预测比分和预测理由
     F->>F: 生成随机 salt
+    F->>F: 本地分析理由标签并计算 reasonHash
     F->>F: 计算 commitment
     F->>F: 本地保存恢复记录
-    F->>C: commitPrediction(matchId, commitment)
+    F->>C: commitPredictionWithReason(matchId, commitment, reasonHash)
     O->>C: submitResult(matchId, actualScore)
     U->>F: 发起 Reveal
     F->>C: revealPrediction(score, salt)
@@ -79,6 +83,22 @@ keccak256(
 
 这里把链 ID、合约地址和钱包地址一起编码，是为了做“域隔离”：同一个预测不能被复制到别的链、别的合约或别的钱包里冒用。
 
+reasonHash 公式：
+
+```text
+keccak256(
+  abi.encode(
+    chainId,
+    contractAddress,
+    walletAddress,
+    matchId,
+    normalizedReason
+  )
+)
+```
+
+`normalizedReason` 是去掉首尾空格、合并连续空白后的预测理由。它不会在 commit 阶段上链，只有哈希会被记录。Reveal 阶段前端可以把恢复文件里的明文理由重新哈希，并与链上 `reasonHash` 对比。
+
 ## 前端模块
 
 ```text
@@ -89,6 +109,7 @@ frontend/src/
 ├─ hooks/                # 读取比赛、排行榜、个人历史
 ├─ lib/
 │  ├─ commitment.ts      # commitment 编码和 salt 生成
+│  ├─ aiReason.ts        # 本地 AI 风格理由分析、reasonHash、赛后复盘
 │  ├─ saltStorage.ts     # 本地 salt 保存、导出、导入
 │  ├─ phases.ts          # 比赛阶段判断
 │  ├─ leaderboard.ts     # 事件聚合排行榜
@@ -124,6 +145,7 @@ scripts/
 - 钱包没本地 ETH：用 `pnpm grant:localhost` 给地址转测试 ETH。
 - 没管理员权限：管理页会显示角色不是 `✓`，同样用授权脚本处理。
 - salt 丢失：无法 reveal，需要导入之前导出的恢复文件。
+- 预测理由丢失：不影响合约 reveal，但前端无法展示完整 AI 复盘和理由哈希匹配说明。
 - 比赛时间填错：前端会先校验，合约也会再次拒绝。
 
 ## 为什么不加传统后端

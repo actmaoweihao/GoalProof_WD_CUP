@@ -26,7 +26,8 @@ body {
   background: radial-gradient(circle at 78% 12%, rgba(63, 178, 131, 0.1), transparent 32%), #07110f;
 }
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 button,
@@ -646,7 +647,8 @@ pre {
   outline: none;
 }
 .score-inputs input:focus,
-.field input:focus {
+.field input:focus,
+.field textarea:focus {
   border-color: var(--acid);
 }
 .score-inputs b {
@@ -688,6 +690,82 @@ pre {
   background: #081310;
   border: 1px solid var(--line);
   outline: none;
+}
+.field textarea {
+  width: 100%;
+  min-height: 116px;
+  resize: vertical;
+  padding: 14px 15px;
+  color: var(--ink);
+  background: linear-gradient(135deg, rgba(98, 226, 173, 0.04), transparent 36%), #081310;
+  border: 1px solid var(--line);
+  outline: none;
+  line-height: 1.7;
+}
+.reason-field {
+  margin-bottom: 16px;
+}
+.ai-reason-card {
+  margin: 16px 0 20px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(199, 255, 74, 0.12), transparent 34%),
+    rgba(98, 226, 173, 0.055);
+  border: 1px solid rgba(98, 226, 173, 0.2);
+}
+.ai-reason-card > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ai-reason-card strong {
+  font-size: 13px;
+}
+.ai-reason-card p {
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.ai-reason-card small {
+  display: block;
+  margin-top: 10px;
+  color: #bad1c8;
+  font-size: 11px;
+  line-height: 1.65;
+}
+.ai-badge,
+.tag-row span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 99px;
+  font: 500 9px "DM Mono";
+}
+.ai-badge {
+  color: #07110f;
+  background: var(--mint);
+  padding: 5px 8px;
+  letter-spacing: 0.1em;
+}
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.tag-row span {
+  color: var(--acid);
+  background: rgba(199, 255, 74, 0.08);
+  border: 1px solid rgba(199, 255, 74, 0.18);
+  padding: 6px 8px;
+}
+.tag-row .tag-ok {
+  color: var(--mint);
+  border-color: rgba(98, 226, 173, 0.32);
+}
+.tag-row .tag-warn {
+  color: #ffb36b;
+  border-color: rgba(255, 179, 107, 0.3);
 }
 .mono-input {
   font: 10px "DM Mono" !important;
@@ -746,6 +824,13 @@ pre {
   background: #07110f;
   font-size: 10px;
   line-height: 1.7;
+}
+.receipt-code-stack {
+  display: grid;
+  gap: 10px;
+}
+.receipt-code-stack code:last-child {
+  color: var(--mint);
 }
 .result-celebration {
   padding: 55px;

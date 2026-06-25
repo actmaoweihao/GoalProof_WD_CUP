@@ -57,13 +57,13 @@ $env:TARGET_ADDRESS='你的钱包地址'; pnpm grant:localhost; Remove-Item Env:
 
    打开管理页，展示角色状态为 `✓`，创建一场未来开赛的比赛。
 
-3. Alice 提交预测，约 40 秒
+3. Alice 提交预测和 AI 理由，约 50 秒
 
-   切换到 Alice 钱包，进入比赛详情页，预测 `2:0` 并提交。强调链上只保存 `bytes32` 哈希，比分和 salt 不公开。
+   切换到 Alice 钱包，进入比赛详情页，预测 `2:0`，写一句理由，例如“巴西进攻状态更好，阿根廷后防存在伤病风险”。展示前端本地 AI 标签和风险等级，然后提交。强调链上只保存 commitment 和 reasonHash，比分、理由、salt 都不公开。
 
 4. Bob 提交预测，约 30 秒
 
-   切换到 Bob 钱包，预测 `3:1` 并提交。展示两个人的 commitment 是不同的不可读哈希。
+   切换到 Bob 钱包，预测 `3:1` 并提交。展示两个人的 commitment 和 reasonHash 都是不同的不可读哈希。
 
 5. 推进本地链时间，约 10 秒
 
@@ -79,7 +79,7 @@ $env:TARGET_ADDRESS='你的钱包地址'; pnpm grant:localhost; Remove-Item Env:
 
 7. Alice 和 Bob Reveal，约 60 秒
 
-   Alice reveal 后得 5 分；Bob reveal 后得 3 分。说明 exact score 和正确胜平负的计分差异。
+   Alice reveal 后得 5 分；Bob reveal 后得 3 分。说明 exact score 和正确胜平负的计分差异，同时展示恢复文件里的预测理由如何与链上 reasonHash 匹配，并生成赛后 AI 复盘。
 
 8. 展示排行榜和个人页，约 30 秒
 
@@ -94,6 +94,7 @@ $env:TARGET_ADDRESS='你的钱包地址'; pnpm grant:localhost; Remove-Item Env:
 - 首页三步流程。
 - 比赛列表。
 - Commit 前后的交易状态。
+- AI 预测理由卡片和 reasonHash。
 - 管理页角色 `✓`。
 - 预言机提交赛果。
 - Reveal 后的得分。

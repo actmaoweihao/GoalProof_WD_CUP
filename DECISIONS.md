@@ -39,3 +39,7 @@ Hardhat 3 provides `hardhat test --coverage`, so no Hardhat-2-only coverage plug
 ## D-010 — Local-first, Sepolia-ready delivery
 
 The local lifecycle, deterministic scripts, coverage, and frontend are complete. Sepolia configuration is included but no public deployment was attempted because no user RPC/key credentials were supplied.
+
+## D-011 — Local AI reason proof instead of external model calls
+
+The AI-themed extension runs entirely in the browser: it tags a user's prediction reason, assigns a simple risk level, and generates a post-match review. The chain stores only `reasonHash`, so the app can prove the reason existed before kickoff without depending on API keys, model availability, or sending user text to an external service during a classroom demo.

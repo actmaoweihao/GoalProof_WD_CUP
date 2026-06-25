@@ -5,6 +5,7 @@ export const WRITE_GAS_LIMITS = {
   pause: 120_000n,
   unpause: 120_000n,
   commitPrediction: 200_000n,
+  commitPredictionWithReason: 220_000n,
   revealPrediction: 260_000n
 } as const;
 

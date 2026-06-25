@@ -19,6 +19,11 @@ const secret: StoredPredictionSecret = {
   predictedAwayScore: 0,
   salt: `0x${"11".repeat(32)}`,
   commitment: `0x${"22".repeat(32)}`,
+  reason: "巴西进攻状态更好。",
+  reasonHash: `0x${"33".repeat(32)}`,
+  aiTags: ["进攻状态"],
+  aiSummary: "AI 将这段理由归纳为：进攻状态；整体属于均衡型判断。",
+  aiRiskLevel: "均衡",
   createdAt: "2026-06-25T00:00:00.000Z"
 };
 
@@ -35,7 +40,9 @@ describe("salt storage", () => {
     saveSecret(secret);
     expect(readSecret(31337, secret.contractAddress, secret.walletAddress, 1n)).toMatchObject({
       predictedHomeScore: 2,
-      salt: secret.salt
+      salt: secret.salt,
+      reasonHash: secret.reasonHash,
+      aiTags: ["进攻状态"]
     });
   });
 

@@ -12,10 +12,27 @@ describe("GoalProof prediction commitments", function () {
     );
     const prediction = await goalProof.getPrediction(1, alice.address);
     expect(prediction.commitment).to.equal(hash);
+    expect(prediction.reasonHash).to.equal(ZERO_HASH);
     expect(prediction.committedAt).to.be.greaterThan(0);
     expect(prediction.predictedHomeScore).to.equal(0);
     expect(prediction.predictedAwayScore).to.equal(0);
     expect(prediction.revealed).to.equal(false);
+  });
+
+  it("stores an AI-assisted prediction reason hash with the commitment", async function () {
+    const { goalProof, alice } = await networkHelpers.loadFixture(deployFixture);
+    await createMatch(goalProof);
+    const commitment = fixedSalt("commitment");
+    const reasonHash = fixedSalt("reason");
+
+    await expect(goalProof.connect(alice).commitPredictionWithReason(1, commitment, reasonHash))
+      .to.emit(goalProof, "PredictionCommitted")
+      .and.to.emit(goalProof, "PredictionReasonCommitted")
+      .withArgs(1, alice.address, reasonHash);
+
+    const prediction = await goalProof.getPrediction(1, alice.address);
+    expect(prediction.commitment).to.equal(commitment);
+    expect(prediction.reasonHash).to.equal(reasonHash);
   });
 
   it("rejects a zero commitment", async function () {
@@ -24,6 +41,14 @@ describe("GoalProof prediction commitments", function () {
     await expect(
       goalProof.connect(alice).commitPrediction(1, ZERO_HASH)
     ).to.be.revertedWithCustomError(goalProof, "ZeroCommitment");
+  });
+
+  it("rejects a zero AI reason hash when using reason-aware commitments", async function () {
+    const { goalProof, alice } = await networkHelpers.loadFixture(deployFixture);
+    await createMatch(goalProof);
+    await expect(
+      goalProof.connect(alice).commitPredictionWithReason(1, fixedSalt("x"), ZERO_HASH)
+    ).to.be.revertedWithCustomError(goalProof, "ZeroReasonHash");
   });
 
   it("rejects an invalid match", async function () {
