@@ -1,0 +1,39 @@
+{
+  "name": "@goalproof/frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.90.16",
+    "react": "19.2.7",
+    "react-dom": "19.2.3",
+    "react-router-dom": "7.18.0",
+    "viem": "2.53.1",
+    "wagmi": "3.6.18"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "5.2.0",
+    "eslint": "9.39.2",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.5.2",
+    "globals": "17.0.0",
+    "jsdom": "29.0.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.62.0",
+    "vite": "7.3.5",
+    "vitest": "4.1.9"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "environment": "Hardhat local simulated network",
+  "compiler": "solc 0.8.28, optimizer 200 runs, Cancun EVM",
+  "generatedAt": "2026-06-24T16:21:35.840Z",
+  "qualification": "Classroom measurements only; not production cost estimates.",
+  "functions": {
+    "createMatch": "121003",
+    "commitPrediction": "75317",
+    "submitResult": "36615",
+    "revealPrediction": "112877"
+  }
+}

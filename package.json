@@ -1,0 +1,51 @@
+{
+  "name": "goalproof",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.3.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "contracts:compile": "hardhat compile",
+    "contracts:test": "hardhat test",
+    "contracts:coverage": "hardhat test --coverage",
+    "contracts:gas": "hardhat run scripts/gas-snapshot.ts",
+    "typecheck": "tsc -p tsconfig.json --pretty false",
+    "node": "hardhat node",
+    "deploy:localhost": "hardhat ignition deploy ignition/modules/GoalProof.ts --network localhost",
+    "deploy:sepolia": "hardhat ignition deploy ignition/modules/GoalProof.ts --network sepolia",
+    "export:abi": "hardhat run scripts/export-abi.ts",
+    "seed:localhost": "hardhat run scripts/seed-demo.ts --network localhost",
+    "demo:localhost": "hardhat run scripts/demo-flow.ts --network localhost",
+    "time:localhost": "hardhat run scripts/advance-time.ts --network localhost",
+    "frontend:dev": "pnpm --dir frontend dev",
+    "frontend:typecheck": "pnpm --dir frontend typecheck",
+    "frontend:lint": "pnpm --dir frontend lint",
+    "frontend:test": "pnpm --dir frontend test",
+    "frontend:build": "pnpm --dir frontend build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm contracts:compile && pnpm typecheck && pnpm contracts:test && pnpm frontend:typecheck && pnpm frontend:lint && pnpm frontend:test && pnpm frontend:build"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-mocha-ethers": "3.0.7",
+    "@nomicfoundation/hardhat-ignition": "3.1.6",
+    "@openzeppelin/contracts": "5.6.1",
+    "@types/chai": "5.2.3",
+    "@types/mocha": "10.0.10",
+    "@types/node": "24.10.1",
+    "chai": "6.2.1",
+    "ethers": "6.16.0",
+    "hardhat": "3.9.0",
+    "mocha": "11.7.5",
+    "prettier": "3.7.4",
+    "typescript": "6.0.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node@4.62.2"
+    }
+  }
+}

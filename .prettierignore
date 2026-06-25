@@ -1,0 +1,7 @@
+node_modules
+artifacts
+cache
+coverage
+frontend/dist
+ignition/deployments
+pnpm-lock.yaml
