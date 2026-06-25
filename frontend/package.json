@@ -13,7 +13,7 @@
   "dependencies": {
     "@tanstack/react-query": "5.90.16",
     "react": "19.2.7",
-    "react-dom": "19.2.3",
+    "react-dom": "19.2.7",
     "react-router-dom": "7.18.0",
     "viem": "2.53.1",
     "wagmi": "3.6.18"
