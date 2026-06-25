@@ -13,7 +13,13 @@ import {
 } from "../lib/saltStorage";
 import { TransactionStatus } from "./TransactionStatus";
 
-export function RevealPanel({ matchId, onConfirmed }: { matchId: bigint; onConfirmed: () => void }) {
+export function RevealPanel({
+  matchId,
+  onConfirmed
+}: {
+  matchId: bigint;
+  onConfirmed: () => void;
+}) {
   const { address } = useAccount();
   const [secret, setSecret] = useState<StoredPredictionSecret | null>(() =>
     address ? readSecret(configuredChainId, goalProofAddress, address, matchId) : null
@@ -83,18 +89,66 @@ export function RevealPanel({ matchId, onConfirmed }: { matchId: bigint; onConfi
     <section className="action-panel reveal-panel">
       <div className="eyebrow">03 · REVEAL</div>
       <h2>公开并自动结算</h2>
-      <p>{secret ? "已找到与当前钱包匹配的本地恢复记录。" : "未找到本地 salt，请导入恢复文件或手动填写。"}</p>
+      <p>
+        {secret
+          ? "已找到与当前钱包匹配的本地恢复记录。"
+          : "未找到本地 salt，请导入恢复文件或手动填写。"}
+      </p>
       <div className="score-inputs compact">
-        <label><span>主队</span><input type="number" min="0" max="30" value={home} onChange={(event) => setHome(Number(event.target.value))} /></label><b>:</b>
-        <label><span>客队</span><input type="number" min="0" max="30" value={away} onChange={(event) => setAway(Number(event.target.value))} /></label>
+        <label>
+          <span>主队</span>
+          <input
+            type="number"
+            min="0"
+            max="30"
+            value={home}
+            onChange={(event) => setHome(Number(event.target.value))}
+          />
+        </label>
+        <b>:</b>
+        <label>
+          <span>客队</span>
+          <input
+            type="number"
+            min="0"
+            max="30"
+            value={away}
+            onChange={(event) => setAway(Number(event.target.value))}
+          />
+        </label>
       </div>
-      <label className="field"><span>恢复 salt</span><input className="mono-input" value={salt} onChange={(event) => setSalt(event.target.value)} placeholder="0x…64 hex characters" /></label>
+      <label className="field">
+        <span>恢复 salt</span>
+        <input
+          className="mono-input"
+          value={salt}
+          onChange={(event) => setSalt(event.target.value)}
+          placeholder="0x…64 hex characters"
+        />
+      </label>
       <div className="button-row">
-        <button className="button button-secondary" onClick={downloadRecovery} disabled={!secret}>导出恢复文件</button>
-        <label className="button button-secondary file-button">导入恢复文件<input type="file" accept="application/json" onChange={uploadRecovery} /></label>
+        <button className="button button-secondary" onClick={downloadRecovery} disabled={!secret}>
+          导出恢复文件
+        </button>
+        <label className="button button-secondary file-button">
+          导入恢复文件
+          <input type="file" accept="application/json" onChange={uploadRecovery} />
+        </label>
       </div>
-      <button className="button button-primary button-wide" disabled={isPending || receipt.isLoading} onClick={reveal}>验证承诺并公开</button>
-      <TransactionStatus pending={isPending} hash={hash} confirming={receipt.isLoading} confirmed={receipt.isSuccess} error={localError || error || receipt.error} />
+      <button
+        className="button button-primary button-wide"
+        disabled={isPending || receipt.isLoading}
+        onClick={reveal}
+      >
+        验证承诺并公开
+      </button>
+      <TransactionStatus
+        pending={isPending}
+        hash={hash}
+        confirming={receipt.isLoading}
+        confirmed={receipt.isSuccess}
+        error={localError || error || receipt.error}
+      />
     </section>
   );
 }

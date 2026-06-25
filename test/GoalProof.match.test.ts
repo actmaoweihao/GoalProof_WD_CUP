@@ -72,10 +72,7 @@ describe("GoalProof match lifecycle", function () {
 
   it("rejects an invalid match id", async function () {
     const { goalProof } = await networkHelpers.loadFixture(deployFixture);
-    await expect(goalProof.getMatch(1)).to.be.revertedWithCustomError(
-      goalProof,
-      "InvalidMatchId"
-    );
+    await expect(goalProof.getMatch(1)).to.be.revertedWithCustomError(goalProof, "InvalidMatchId");
   });
 
   it("cancels a valid unresolved match", async function () {

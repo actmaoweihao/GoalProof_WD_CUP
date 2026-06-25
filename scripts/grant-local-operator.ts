@@ -6,7 +6,9 @@ import type { GoalProof } from "../types/ethers-contracts/GoalProof.js";
 
 const target = process.env.TARGET_ADDRESS;
 if (!target || !isAddress(target)) {
-  throw new Error("Usage: TARGET_ADDRESS=0x... hardhat run scripts/grant-local-operator.ts --network localhost");
+  throw new Error(
+    "Usage: TARGET_ADDRESS=0x... hardhat run scripts/grant-local-operator.ts --network localhost"
+  );
 }
 
 const { ethers } = await network.create();
@@ -15,9 +17,13 @@ const addresses = JSON.parse(
   await readFile(resolve("ignition/deployments/chain-31337/deployed_addresses.json"), "utf8")
 ) as Record<string, string>;
 const contractAddress = addresses["GoalProofModule#GoalProof"];
-if (!contractAddress) throw new Error("GoalProof Ignition deployment not found. Run deploy:localhost first.");
+if (!contractAddress)
+  throw new Error("GoalProof Ignition deployment not found. Run deploy:localhost first.");
 
-const goalProof = (await ethers.getContractAt("GoalProof", contractAddress)) as unknown as GoalProof;
+const goalProof = (await ethers.getContractAt(
+  "GoalProof",
+  contractAddress
+)) as unknown as GoalProof;
 const roleNames = ["MATCH_MANAGER_ROLE", "ORACLE_ROLE", "PAUSER_ROLE"] as const;
 
 for (const roleName of roleNames) {
@@ -48,7 +54,10 @@ console.log(
       balanceEth: ethers.formatEther(afterBalance),
       roles: Object.fromEntries(
         await Promise.all(
-          roleNames.map(async (roleName) => [roleName, await goalProof.hasRole(id(roleName), target)])
+          roleNames.map(async (roleName) => [
+            roleName,
+            await goalProof.hasRole(id(roleName), target)
+          ])
         )
       )
     },

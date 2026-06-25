@@ -28,9 +28,9 @@ export function normalizeMatch(value: unknown): MatchData | undefined {
   return {
     homeTeam: String(named.homeTeam ?? tuple[0]),
     awayTeam: String(named.awayTeam ?? tuple[1]),
-    kickoffTime: BigInt(named.kickoffTime as bigint ?? (tuple[2] as bigint)),
-    commitDeadline: BigInt(named.commitDeadline as bigint ?? (tuple[3] as bigint)),
-    revealDeadline: BigInt(named.revealDeadline as bigint ?? (tuple[4] as bigint)),
+    kickoffTime: BigInt((named.kickoffTime as bigint) ?? (tuple[2] as bigint)),
+    commitDeadline: BigInt((named.commitDeadline as bigint) ?? (tuple[3] as bigint)),
+    revealDeadline: BigInt((named.revealDeadline as bigint) ?? (tuple[4] as bigint)),
     actualHomeScore: Number(named.actualHomeScore ?? tuple[5]),
     actualAwayScore: Number(named.actualAwayScore ?? tuple[6]),
     resultSubmitted: Boolean(named.resultSubmitted ?? tuple[7]),
@@ -45,8 +45,8 @@ export function normalizePrediction(value: unknown): PredictionData | undefined 
   const tuple = value as readonly unknown[];
   return {
     commitment: String(named.commitment ?? tuple[0]) as `0x${string}`,
-    committedAt: BigInt(named.committedAt as bigint ?? (tuple[1] as bigint)),
-    revealedAt: BigInt(named.revealedAt as bigint ?? (tuple[2] as bigint)),
+    committedAt: BigInt((named.committedAt as bigint) ?? (tuple[1] as bigint)),
+    revealedAt: BigInt((named.revealedAt as bigint) ?? (tuple[2] as bigint)),
     predictedHomeScore: Number(named.predictedHomeScore ?? tuple[3]),
     predictedAwayScore: Number(named.predictedAwayScore ?? tuple[4]),
     pointsAwarded: Number(named.pointsAwarded ?? tuple[5]),

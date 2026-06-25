@@ -18,6 +18,8 @@
     "deploy:sepolia": "hardhat ignition deploy ignition/modules/GoalProof.ts --network sepolia",
     "export:abi": "hardhat run scripts/export-abi.ts",
     "seed:localhost": "hardhat run scripts/seed-demo.ts --network localhost",
+    "setup:localhost": "pnpm deploy:localhost && pnpm seed:localhost",
+    "grant:localhost": "hardhat run scripts/grant-local-operator.ts --network localhost",
     "demo:localhost": "hardhat run scripts/demo-flow.ts --network localhost",
     "time:localhost": "hardhat run scripts/advance-time.ts --network localhost",
     "frontend:dev": "pnpm --dir frontend dev",

@@ -424,7 +424,7 @@ Do not use `abi.encodePacked`.
 Generate a cryptographically random 32-byte salt in the browser:
 
 ```ts
-crypto.getRandomValues(new Uint8Array(32))
+crypto.getRandomValues(new Uint8Array(32));
 ```
 
 Convert it to a `0x`-prefixed `bytes32` hex string.
@@ -620,13 +620,13 @@ otherwise                             → 0 points
 Examples:
 
 | Actual | Predicted | Points |
-|---|---|---:|
-| 2–0 | 2–0 | 5 |
-| 2–0 | 3–1 | 3 |
-| 2–0 | 1–1 | 0 |
-| 1–1 | 0–0 | 3 |
-| 1–1 | 1–1 | 5 |
-| 0–2 | 1–3 | 3 |
+| ------ | --------- | -----: |
+| 2–0    | 2–0       |      5 |
+| 2–0    | 3–1       |      3 |
+| 2–0    | 1–1       |      0 |
+| 1–1    | 0–0       |      3 |
+| 1–1    | 1–1       |      5 |
+| 0–2    | 1–3       |      3 |
 
 Implement the algorithm as a pure function and test it independently.
 

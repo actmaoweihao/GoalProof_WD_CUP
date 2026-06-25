@@ -40,8 +40,7 @@ export function aggregateLeaderboard(scoreEvents: ScoreEvent[], reveals: RevealE
       totalScore: Number(event.newTotalScore),
       scoredMatches: (previous?.scoredMatches ?? 0) + 1,
       exactScores:
-        (previous?.exactScores ?? 0) +
-        (exact.has(`${address}:${event.matchId}`) ? 1 : 0),
+        (previous?.exactScores ?? 0) + (exact.has(`${address}:${event.matchId}`) ? 1 : 0),
       firstScoredBlock:
         previous && previous.firstScoredBlock < event.blockNumber
           ? previous.firstScoredBlock

@@ -1,133 +1,379 @@
-# GoalProof
+# GoalProof：基于区块链的世界杯比分预测证明系统
 
-GoalProof is a non-financial World Cup prediction reputation app. It proves that a hidden score prediction existed before kickoff, then verifies and scores the prediction after an authorized oracle publishes the result.
+GoalProof 是一个区块链课程项目，用来演示 `commit–reveal`（先承诺、后公开）机制。它不是投注平台，也没有代币、奖池或真钱转账；它只解决一个很适合区块链的问题：
 
-It is a complete blockchain course MVP: Solidity state machine, 80 automated tests, deterministic local demo, wallet-connected React UI, recovery-safe commit–reveal flow, event-derived leaderboard, admin/oracle operations, gas evidence, and security documentation.
+> 我想在比赛开始前提交预测，但不想提前公开答案；比赛结束后，我又能证明自己当时确实已经提交过这个预测。
 
-## Why blockchain?
+普通网页可以让服务器保存预测，但大家必须相信服务器没有偷偷改时间或改内容。GoalProof 把“预测承诺”写到链上，链上记录不可篡改；等赛果出来后，用户公开原预测和随机盐，合约自动验证并计分。
 
-A normal public prediction leaks the answer. A private centralized record asks users to trust its operator not to rewrite timestamps or content. GoalProof publishes an immutable commitment before kickoff without publishing the score itself. Later, the original score and secret salt reproduce the commitment on-chain and settle points deterministically.
+## 一句话理解流程
 
 ```mermaid
 flowchart LR
-  Browser[React + private salt] --> Wallet[Injected wallet]
-  Wallet --> Contract[GoalProof.sol]
-  Admin[Match manager] --> Contract
-  Oracle[Authorized oracle] --> Contract
-  Contract --> Events[Immutable events]
-  Events --> Board[Browser leaderboard]
+  A[用户输入比分] --> B[浏览器生成 salt]
+  B --> C[链上只提交 hash]
+  C --> D[比赛开始后预言机提交赛果]
+  D --> E[用户公开比分 + salt]
+  E --> F[合约验证 hash 并计分]
 ```
 
-## Technology
+Commit 阶段链上只看到一串 `bytes32` 哈希，看不到比分。Reveal 阶段用户拿出原比分和 salt，合约重新计算哈希；如果和当初链上记录一致，就证明这个预测确实提前存在。
 
-- Node.js 22.13+ and pnpm 9
-- Solidity 0.8.28, Hardhat 3, OpenZeppelin Contracts 5
-- React 19, Vite 7, wagmi 3, viem 2, TanStack Query
-- Mocha/Chai contract tests and Vitest frontend tests
+## 项目包含什么
 
-## Quick start
+- Solidity 合约：比赛创建、预测承诺、赛果提交、公开验证、自动计分、权限控制、暂停机制。
+- React 前端：连接 MetaMask/Rabby，本地创建比赛、提交预测、公开预测、查看排行榜。
+- 本地演示链：Hardhat Local，不需要真实 ETH。
+- 自动化测试：合约测试、前端测试、跨前后端哈希一致性测试。
+- 演示脚本：可以一键跑完整 Alice/Bob 预测流程。
 
-Install once:
+## 技术栈
 
-```bash
+- Node.js `>= 22.13`
+- pnpm `9.x`
+- Solidity `0.8.28`
+- Hardhat 3
+- OpenZeppelin Contracts 5
+- React 19 + Vite 7
+- wagmi + viem
+- MetaMask 或 Rabby 钱包插件
+
+如果电脑还没有 pnpm，可以先运行：
+
+```powershell
+corepack enable
+corepack prepare pnpm@9.3.0 --activate
+```
+
+## 目录结构
+
+```text
+.
+├─ contracts/              # 智能合约
+│  └─ GoalProof.sol
+├─ test/                   # 合约测试
+├─ ignition/modules/       # Hardhat Ignition 部署模块
+├─ scripts/                # 本地演示、授权、导出 ABI、gas 报告脚本
+├─ shared/                 # 前后端共用的演示数据和计分逻辑
+├─ frontend/               # React 前端
+│  └─ src/
+│     ├─ abi/              # 前端使用的合约 ABI
+│     ├─ components/       # 钱包按钮、提交/公开面板等
+│     ├─ hooks/            # 读取比赛、排行榜、个人历史
+│     ├─ lib/              # 哈希、salt 存储、阶段判断、错误提示
+│     └─ pages/            # 首页、比赛、排行榜、个人页、管理页
+├─ docs/                   # 架构、安全、测试、演示说明
+├─ DECISIONS.md            # 关键技术取舍
+└─ GOALPROOF_DEVELOPMENT_SPEC.md  # 原始课程项目设计规格
+```
+
+生成目录如 `node_modules/`、`frontend/dist/`、`coverage/`、`types/`、`artifacts/` 都已放进 `.gitignore`，不需要提交。
+
+## 第一次运行：本地完整启动
+
+先安装依赖：
+
+```powershell
 pnpm install
 ```
 
-Start a local chain in terminal 1:
+然后开三个终端。
 
-```bash
+终端 1：启动本地区块链。
+
+```powershell
 pnpm node
 ```
 
-Deploy and seed four demo fixtures in terminal 2:
+这个终端会打印很多 Hardhat 测试账号。它们只用于本地开发，千万不要在真实网络使用。
 
-```bash
+终端 2：部署合约并注入 4 场演示比赛。
+
+```powershell
+pnpm setup:localhost
+```
+
+如果想分开执行，也可以：
+
+```powershell
 pnpm deploy:localhost
 pnpm seed:localhost
 ```
 
-Start the app in terminal 3:
+终端 3：启动前端。
 
-```bash
+```powershell
 pnpm frontend:dev
 ```
 
-Open `http://127.0.0.1:5173`, add the Hardhat network (`31337`, `http://127.0.0.1:8545`) to an injected wallet, and import only the printed local development accounts. Never use those public development keys on a real network.
+浏览器打开：
 
-When the local node restarts its state is erased. Redeploy and seed again; otherwise the UI intentionally shows “contract not found.”
+```text
+http://127.0.0.1:5173/
+```
 
-## Deterministic CLI proof
+## 配置 MetaMask
 
-With the local node running:
+本项目默认连接 Hardhat Local。
 
-```bash
+在 MetaMask 里添加网络：
+
+| 字段     | 填写                    |
+| -------- | ----------------------- |
+| 网络名称 | Hardhat Local           |
+| RPC URL  | `http://127.0.0.1:8545` |
+| Chain ID | `31337`                 |
+| 货币符号 | `ETH`                   |
+
+### 方式一：导入 Hardhat 测试账号
+
+`pnpm node` 终端会打印账号和私钥。导入 Account #0 最省事，因为它默认拥有：
+
+- 10000 个本地测试 ETH
+- 比赛管理员权限
+- 预言机权限
+- 暂停员权限
+
+这些私钥是公开开发私钥，只能在本地链用。
+
+### 方式二：给自己的 MetaMask 地址授权
+
+如果想用自己已有的 MetaMask 地址，在终端 2 运行：
+
+```powershell
+$env:TARGET_ADDRESS='你的钱包地址'; pnpm grant:localhost; Remove-Item Env:\TARGET_ADDRESS
+```
+
+这个脚本会给该地址：
+
+- 转 10 个本地测试 ETH
+- 授予比赛管理员、预言机、暂停员三个角色
+
+刷新页面后，管理页顶部应该显示：
+
+```text
+比赛管理员 ✓
+预言机 ✓
+暂停员 ✓
+```
+
+## 页面怎么用
+
+### 比赛页
+
+显示当前链上比赛列表。每场比赛会根据链上时间显示阶段：
+
+- 可提交预测
+- 等待赛果
+- 可公开预测
+- 已结束
+- 已取消
+
+### 比赛详情页
+
+普通用户在这里完成 commit–reveal：
+
+1. 在 Commit 阶段输入比分。
+2. 浏览器生成随机 salt，并保存到本机 localStorage。
+3. 钱包签名交易，链上只保存哈希。
+4. 赛果提交后，用户 Reveal 原比分和 salt。
+5. 合约验证成功后自动计分。
+
+重要：如果清空浏览器数据，salt 可能丢失。提交预测后建议导出恢复文件。
+
+### 管理页
+
+用于课程演示中的“管理员”和“预言机”操作：
+
+- 创建比赛
+- 提交最终赛果
+- 取消比赛
+- 暂停/恢复合约写操作
+
+这些权限最终由 Solidity 合约判断，前端只是辅助显示。
+
+### 排行榜和个人页
+
+排行榜由链上事件计算，不在合约里循环排序。个人页可以查看某个地址的历史提交和得分情况。
+
+## 课堂演示推荐流程
+
+1. 管理员创建一场未来开赛的比赛。
+2. 切换到 Alice 钱包，提交 `2:0` 预测。
+3. 切换到 Bob 钱包，提交 `3:1` 预测。
+4. 等待或运行下面命令推进本地链时间：
+
+```powershell
+pnpm time:localhost
+```
+
+5. 预言机提交真实赛果 `2:0`。
+6. Alice Reveal，得到 5 分。
+7. Bob Reveal，猜中胜负但比分不完全一致，得到 3 分。
+8. 打开排行榜和个人页展示结果。
+
+也可以直接运行命令行完整演示：
+
+```powershell
 pnpm demo:localhost
 ```
 
-The script deploys an isolated demo contract, commits three hidden predictions, advances chain time, submits 2–0, reveals, asserts Alice = 5, Bob = 3, Charlie = 0, and prints gas usage. It exits non-zero on a failed assertion.
+这个脚本会部署一个独立演示合约，模拟 Alice/Bob/Charlie 的预测、推进时间、提交赛果、公开并校验分数。
 
-For the browser recording flow, `pnpm time:localhost` advances the local chain by 400 seconds after Alice and Bob commit.
+## 计分规则
 
-## Scoring and timing
+| 情况                               | 分数 |
+| ---------------------------------- | ---: |
+| 比分完全正确                       |    5 |
+| 胜/平/负结果正确，但比分不完全正确 |    3 |
+| 结果错误                           |    0 |
 
-| Prediction | Points |
-|---|---:|
-| Exact score | 5 |
-| Correct win/draw/loss outcome | 3 |
-| Wrong outcome | 0 |
+例子：真实赛果是 `BRA 2 : 0 ARG`。
 
-- Commit: `block.timestamp < commitDeadline`
-- Result: `block.timestamp >= kickoffTime`
-- Reveal: result submitted and `block.timestamp <= revealDeadline`
+- 预测 `2 : 0` 得 5 分。
+- 预测 `3 : 1` 得 3 分，因为都表示主队赢。
+- 预测 `1 : 1` 得 0 分。
 
-The commitment is `keccak256(abi.encode(chainId, contractAddress, wallet, matchId, homeScore, awayScore, salt))`. The score and salt are never stored on-chain during commit.
+## 核心合约设计
 
-## Quality commands
+合约 `GoalProof.sol` 是系统唯一可信状态机。它负责：
 
-```bash
-pnpm check                 # compile, root TS, 62 contract tests, frontend TS/lint, 18 tests, build
-pnpm contracts:coverage    # 98.29% line / 98.04% statement coverage
-pnpm contracts:gas         # writes docs/gas-report.json
-pnpm export:abi            # refreshes frontend ABI after contract changes
+- 角色权限：管理员、预言机、暂停员
+- 比赛生命周期：创建、取消、开赛、截止
+- 预测承诺：每个地址每场比赛只能 commit 一次
+- 赛果提交：预言机提交后不可修改
+- 公开验证：重新计算 commitment 并比对
+- 自动计分：Reveal 成功时立即写入积分
+
+commitment 计算方式：
+
+```text
+keccak256(
+  abi.encode(
+    chainId,
+    contractAddress,
+    walletAddress,
+    matchId,
+    predictedHomeScore,
+    predictedAwayScore,
+    salt
+  )
+)
 ```
 
-## Environment
+把 `chainId`、合约地址和钱包地址一起编码，是为了防止同一个哈希被复制到别的链、别的合约或别的钱包里复用。
 
-Copy `.env.example` only for Sepolia deployment. Copy `frontend/.env.example` to override the public RPC, chain ID, contract address, or deployment block. Never put private keys in frontend variables.
+## 常用命令
 
-Sepolia is configured but optional:
+| 命令                      | 作用                          |
+| ------------------------- | ----------------------------- |
+| `pnpm install`            | 安装依赖                      |
+| `pnpm node`               | 启动 Hardhat 本地链           |
+| `pnpm setup:localhost`    | 部署合约并创建演示比赛        |
+| `pnpm frontend:dev`       | 启动前端                      |
+| `pnpm grant:localhost`    | 给指定地址本地 ETH 和角色权限 |
+| `pnpm time:localhost`     | 推进本地链时间，方便演示      |
+| `pnpm demo:localhost`     | 命令行跑完整预测流程          |
+| `pnpm check`              | 跑完整质量检查                |
+| `pnpm contracts:coverage` | 合约覆盖率                    |
+| `pnpm contracts:gas`      | 生成 gas 报告                 |
 
-```bash
-pnpm deploy:sepolia
+## 测试和质量
+
+完整检查：
+
+```powershell
+pnpm check
 ```
 
-No public address is included because this delivery did not receive deployment credentials or faucet ETH.
+当前覆盖内容：
 
-## Repository map
+- 62 个合约测试
+- 20 个前端测试
+- 合约编译
+- TypeScript 类型检查
+- ESLint
+- 前端生产构建
 
-- `contracts/GoalProof.sol` — roles, fixtures, commit–reveal, settlement, counters, pause
-- `test/` — 62 contract tests and full integration proof
-- `scripts/` — seed, demo, ABI export, time advance, gas snapshot
-- `frontend/` — complete wallet UI and 18 pure-module tests
-- `docs/ARCHITECTURE.md` — components and data flow
-- `docs/SECURITY.md` — threat model and trust assumptions
-- `docs/DEMO_SCRIPT.md` — stable classroom recording flow
-- `DECISIONS.md` — compatibility and scope trade-offs
+合约覆盖率可运行：
 
-## Known limitations and future work
+```powershell
+pnpm contracts:coverage
+```
 
-- The oracle and admin are trusted roles; production should use stronger governance and a decentralized data source.
-- Browser local storage is a convenience, not secure custody. Losing the salt prevents reveal.
-- Event scans are suitable for a classroom dataset, not high-volume production indexing.
-- Fixtures are simulated and are not official tournament claims.
-- ERC-1155 reputation badges and a funded Sepolia deployment remain optional extensions.
-- This code has automated tests and a manual threat review but no third-party audit.
+gas 报告可运行：
 
-## Suggested team roles
+```powershell
+pnpm contracts:gas
+```
 
-- Smart contract and test engineering
-- Frontend and wallet integration
-- Demo/data operations and security review
-- Presentation and documentation
+报告输出在 `docs/gas-report.json`。
 
-This project contains no wagering, deposits, prize pool, token, or real-money transfer logic.
+## 常见问题
+
+### 1. 点击连接钱包没反应
+
+确认 Chrome 里安装并启用了 MetaMask 或 Rabby。刷新页面后再点连接。前端会提示当前浏览器是否检测到钱包插件。
+
+### 2. MetaMask 显示 0 ETH
+
+你可能连的是自己的空账号。可以导入 Hardhat 本地账号，或用：
+
+```powershell
+$env:TARGET_ADDRESS='你的钱包地址'; pnpm grant:localhost; Remove-Item Env:\TARGET_ADDRESS
+```
+
+### 3. 管理页不能创建比赛
+
+检查三件事：
+
+- MetaMask 网络是否是 Hardhat Local。
+- 当前地址是否显示 `比赛管理员 ✓`。
+- 比赛时间是否在未来，并且满足：承诺截止 < 开赛时间 < 公开截止。
+
+### 4. 页面提示当前地址没有合约
+
+本地链重启后状态会清空，需要重新部署：
+
+```powershell
+pnpm setup:localhost
+```
+
+### 5. 预测后无法 Reveal
+
+Reveal 需要当初的 salt。如果浏览器数据被清空，需要导入之前导出的恢复文件。没有 salt 就无法证明原预测。
+
+### 6. 为什么不用真实世界杯数据？
+
+这是课程演示项目。真实数据源会引入额外 oracle 设计和可信问题，所以当前版本使用授权预言机手动提交赛果，并在文档中明确这是 MVP 限制。
+
+## 项目边界
+
+本项目明确不包含：
+
+- 押注
+- 赔率
+- 奖池
+- 充值/提现
+- 代币发行
+- NFT 奖励
+- 真实赛事数据声明
+
+它的重点是展示：如何用链上不可篡改记录 + commit–reveal 机制解决“提前预测但不提前公开”的问题。
+
+## 更多文档
+
+- `docs/ARCHITECTURE.md`：系统架构和数据流。
+- `docs/SECURITY.md`：安全假设和风险。
+- `docs/TEST_PLAN.md`：测试计划。
+- `docs/DEMO_SCRIPT.md`：课堂录屏/展示脚本。
+- `DECISIONS.md`：关键技术取舍记录。
+
+## 小组分工建议
+
+- 合约同学：讲 `GoalProof.sol`、权限、commit–reveal 和测试。
+- 前端同学：讲钱包连接、页面流程、salt 恢复文件。
+- 演示同学：负责本地链、MetaMask、创建比赛、提交赛果。
+- 汇报同学：讲为什么需要区块链、项目边界和未来改进。
+
+如果只需要演示，不必每个人都懂 Solidity；按照 README 跑通本地流程即可。

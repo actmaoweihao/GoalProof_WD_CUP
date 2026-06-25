@@ -4,7 +4,9 @@ import { configuredChain } from "../config/wagmi";
 import { shortAddress } from "../lib/format";
 
 function getInjectedProvider() {
-  return typeof window === "undefined" ? undefined : (window as Window & { ethereum?: unknown }).ethereum;
+  return typeof window === "undefined"
+    ? undefined
+    : (window as Window & { ethereum?: unknown }).ethereum;
 }
 
 function walletErrorMessage(error: unknown) {
@@ -41,7 +43,9 @@ export function WalletButton() {
           onClick={async () => {
             setConnectionError(null);
             if (!hasInjectedProvider) {
-              setConnectionError("当前 Chrome 没有检测到钱包插件，请安装或启用 MetaMask / Rabby 后刷新。");
+              setConnectionError(
+                "当前 Chrome 没有检测到钱包插件，请安装或启用 MetaMask / Rabby 后刷新。"
+              );
               return;
             }
             if (!injectedConnector) {
@@ -63,7 +67,10 @@ export function WalletButton() {
   }
   if (chainId !== configuredChain.id) {
     return (
-      <button className="button button-warning" onClick={() => switchChain({ chainId: configuredChain.id })}>
+      <button
+        className="button button-warning"
+        onClick={() => switchChain({ chainId: configuredChain.id })}
+      >
         切换到 {configuredChain.name}
       </button>
     );

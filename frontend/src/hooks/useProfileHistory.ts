@@ -19,16 +19,30 @@ export function useProfileHistory(user?: Address) {
     queryFn: async () => {
       if (!client || !user) return [];
       const [commits, reveals] = await Promise.all([
-        client.getLogs({ address: goalProofAddress, event: committedEvent, args: { user }, fromBlock: deploymentBlock }),
-        client.getLogs({ address: goalProofAddress, event: revealedEvent, args: { user }, fromBlock: deploymentBlock })
+        client.getLogs({
+          address: goalProofAddress,
+          event: committedEvent,
+          args: { user },
+          fromBlock: deploymentBlock
+        }),
+        client.getLogs({
+          address: goalProofAddress,
+          event: revealedEvent,
+          args: { user },
+          fromBlock: deploymentBlock
+        })
       ]);
-      const revealsByMatch = new Map(reveals.map((log) => [log.args.matchId!.toString(), log.args]));
-      return commits.map((log) => ({
-        matchId: log.args.matchId!,
-        commitment: log.args.commitment!,
-        committedAt: log.args.committedAt!,
-        reveal: revealsByMatch.get(log.args.matchId!.toString())
-      })).reverse();
+      const revealsByMatch = new Map(
+        reveals.map((log) => [log.args.matchId!.toString(), log.args])
+      );
+      return commits
+        .map((log) => ({
+          matchId: log.args.matchId!,
+          commitment: log.args.commitment!,
+          committedAt: log.args.committedAt!,
+          reveal: revealsByMatch.get(log.args.matchId!.toString())
+        }))
+        .reverse();
     }
   });
 }

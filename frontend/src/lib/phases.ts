@@ -24,7 +24,8 @@ export function getMatchPhase(
   if (match.resultSubmitted && userRevealed) return "COMPLETED";
   if (nowSeconds < match.commitDeadline) return "COMMIT_OPEN";
   if (nowSeconds < match.kickoffTime) return "WAITING_FOR_KICKOFF";
-  if (!match.resultSubmitted) return nowSeconds > match.revealDeadline ? "REVEAL_CLOSED" : "WAITING_FOR_RESULT";
+  if (!match.resultSubmitted)
+    return nowSeconds > match.revealDeadline ? "REVEAL_CLOSED" : "WAITING_FOR_RESULT";
   if (nowSeconds <= match.revealDeadline) return "REVEAL_OPEN";
   return "REVEAL_CLOSED";
 }

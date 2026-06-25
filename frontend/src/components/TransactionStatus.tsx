@@ -28,11 +28,18 @@ export function TransactionStatus({
                 ? "等待链上确认"
                 : "已提交"}
       </strong>
-      {hash && <code>{hash.slice(0, 14)}…{hash.slice(-8)}</code>}
+      {hash && (
+        <code>
+          {hash.slice(0, 14)}…{hash.slice(-8)}
+        </code>
+      )}
       {Boolean(error) && (
         <>
           <span>{getErrorMessage(error)}</span>
-          <details><summary>技术详情</summary><pre>{getTechnicalError(error)}</pre></details>
+          <details>
+            <summary>技术详情</summary>
+            <pre>{getTechnicalError(error)}</pre>
+          </details>
         </>
       )}
     </div>

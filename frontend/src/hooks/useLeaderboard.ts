@@ -20,8 +20,16 @@ export function useLeaderboard() {
     queryFn: async () => {
       if (!client) return [];
       const [scores, reveals] = await Promise.all([
-        client.getLogs({ address: goalProofAddress, event: scoreEvent, fromBlock: deploymentBlock }),
-        client.getLogs({ address: goalProofAddress, event: revealEvent, fromBlock: deploymentBlock })
+        client.getLogs({
+          address: goalProofAddress,
+          event: scoreEvent,
+          fromBlock: deploymentBlock
+        }),
+        client.getLogs({
+          address: goalProofAddress,
+          event: revealEvent,
+          fromBlock: deploymentBlock
+        })
       ]);
       return aggregateLeaderboard(
         scores.map((log) => ({

@@ -6,7 +6,9 @@ import type { GoalProof } from "../types/ethers-contracts/GoalProof.js";
 
 const { ethers, networkHelpers } = await network.create();
 const [admin, oracle, alice] = await ethers.getSigners();
-const goalProof = (await ethers.deployContract("GoalProof", [admin.address])) as unknown as GoalProof;
+const goalProof = (await ethers.deployContract("GoalProof", [
+  admin.address
+])) as unknown as GoalProof;
 await goalProof.waitForDeployment();
 await (await goalProof.grantRole(keccak256(toUtf8Bytes("ORACLE_ROLE")), oracle.address)).wait();
 

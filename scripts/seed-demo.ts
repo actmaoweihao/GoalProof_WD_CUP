@@ -11,8 +11,12 @@ const addresses = JSON.parse(
   await readFile(resolve("ignition/deployments/chain-31337/deployed_addresses.json"), "utf8")
 ) as Record<string, string>;
 const contractAddress = addresses["GoalProofModule#GoalProof"];
-if (!contractAddress) throw new Error("GoalProof Ignition deployment not found. Run deploy:localhost first.");
-const goalProof = (await ethers.getContractAt("GoalProof", contractAddress)) as unknown as GoalProof;
+if (!contractAddress)
+  throw new Error("GoalProof Ignition deployment not found. Run deploy:localhost first.");
+const goalProof = (await ethers.getContractAt(
+  "GoalProof",
+  contractAddress
+)) as unknown as GoalProof;
 if (!(await goalProof.hasRole(id("ORACLE_ROLE"), oracle.address))) {
   await (await goalProof.grantRole(id("ORACLE_ROLE"), oracle.address)).wait();
 }

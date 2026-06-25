@@ -86,9 +86,7 @@ export function readSecret(
   matchId: bigint | string,
   storage: StorageLike = localStorage
 ) {
-  const raw = storage.getItem(
-    secretStorageKey(chainId, contractAddress, walletAddress, matchId)
-  );
+  const raw = storage.getItem(secretStorageKey(chainId, contractAddress, walletAddress, matchId));
   return raw ? validateSecret(JSON.parse(raw)) : null;
 }
 

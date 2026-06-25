@@ -12,7 +12,9 @@ export const ZERO_HASH = `0x${"00".repeat(32)}`;
 
 export async function deployFixture() {
   const [admin, oracle, alice, bob, charlie, outsider] = await ethers.getSigners();
-  const goalProof = (await ethers.deployContract("GoalProof", [admin.address])) as unknown as GoalProof;
+  const goalProof = (await ethers.deployContract("GoalProof", [
+    admin.address
+  ])) as unknown as GoalProof;
   await goalProof.waitForDeployment();
   await goalProof.grantRole(ORACLE_ROLE, oracle.address);
   return { goalProof, admin, oracle, alice, bob, charlie, outsider };

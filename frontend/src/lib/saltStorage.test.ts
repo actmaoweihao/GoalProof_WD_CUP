@@ -68,11 +68,13 @@ describe("salt storage", () => {
   });
 
   it("rejects malformed recovery data", () => {
-    expect(() => importSecret("{}", {
-      chainId: 31337,
-      contractAddress: secret.contractAddress,
-      walletAddress: secret.walletAddress,
-      matchId: 1n
-    })).toThrow(/version/);
+    expect(() =>
+      importSecret("{}", {
+        chainId: 31337,
+        contractAddress: secret.contractAddress,
+        walletAddress: secret.walletAddress,
+        matchId: 1n
+      })
+    ).toThrow(/version/);
   });
 });

@@ -9,8 +9,10 @@ const FRIENDLY_ERRORS: Record<string, string> = {
   EnforcedPause: "合约当前处于暂停状态。",
   MatchCanceledError: "这场比赛已被取消。",
   ScoreOutOfRange: "比分必须在 0 到 30 之间。",
-  InvalidTimeConfiguration: "比赛时间配置无效：承诺截止必须晚于当前时间，开赛必须晚于承诺截止，公开截止必须晚于开赛。",
-  "exceeds transaction gas cap": "钱包给出的 gas limit 超过本地链上限。请刷新页面后重试，前端已为交易设置合理 gas 上限。"
+  InvalidTimeConfiguration:
+    "比赛时间配置无效：承诺截止必须晚于当前时间，开赛必须晚于承诺截止，公开截止必须晚于开赛。",
+  "exceeds transaction gas cap":
+    "钱包给出的 gas limit 超过本地链上限。请刷新页面后重试，前端已为交易设置合理 gas 上限。"
 };
 
 export function getErrorMessage(error: unknown) {

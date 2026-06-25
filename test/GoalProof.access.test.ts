@@ -11,7 +11,9 @@ import {
 describe("GoalProof access control", function () {
   it("grants all operational roles to the deployer", async function () {
     const { goalProof, admin } = await networkHelpers.loadFixture(deployFixture);
-    expect(await goalProof.hasRole(await goalProof.DEFAULT_ADMIN_ROLE(), admin.address)).to.equal(true);
+    expect(await goalProof.hasRole(await goalProof.DEFAULT_ADMIN_ROLE(), admin.address)).to.equal(
+      true
+    );
     expect(await goalProof.hasRole(MATCH_MANAGER_ROLE, admin.address)).to.equal(true);
     expect(await goalProof.hasRole(ORACLE_ROLE, admin.address)).to.equal(true);
     expect(await goalProof.hasRole(PAUSER_ROLE, admin.address)).to.equal(true);
