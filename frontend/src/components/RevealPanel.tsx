@@ -4,6 +4,7 @@ import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagm
 import { goalProofAbi } from "../abi";
 import { configuredChainId, goalProofAddress } from "../config/deployment";
 import { isBytes32 } from "../lib/commitment";
+import { WRITE_GAS_LIMITS } from "../lib/gas";
 import {
   exportSecret,
   importSecret,
@@ -70,7 +71,8 @@ export function RevealPanel({ matchId, onConfirmed }: { matchId: bigint; onConfi
         address: goalProofAddress,
         abi: goalProofAbi,
         functionName: "revealPrediction",
-        args: [matchId, home, away, salt as Hex]
+        args: [matchId, home, away, salt as Hex],
+        gas: WRITE_GAS_LIMITS.revealPrediction
       });
     } catch (revealError) {
       setLocalError(revealError);

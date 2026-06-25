@@ -3,6 +3,7 @@ import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagm
 import { goalProofAbi } from "../abi";
 import { configuredChainId, goalProofAddress } from "../config/deployment";
 import { computePredictionCommitment, generateSalt } from "../lib/commitment";
+import { WRITE_GAS_LIMITS } from "../lib/gas";
 import { saveSecret, type StoredPredictionSecret } from "../lib/saltStorage";
 import { TransactionStatus } from "./TransactionStatus";
 
@@ -56,7 +57,8 @@ export function CommitPanel({ matchId, onConfirmed }: { matchId: bigint; onConfi
         address: goalProofAddress,
         abi: goalProofAbi,
         functionName: "commitPrediction",
-        args: [matchId, commitment]
+        args: [matchId, commitment],
+        gas: WRITE_GAS_LIMITS.commitPrediction
       });
       saveSecret({ ...secret, transactionHash });
     } catch (submitError) {
