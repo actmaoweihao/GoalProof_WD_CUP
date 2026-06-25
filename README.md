@@ -64,10 +64,12 @@ corepack prepare pnpm@9.3.0 --activate
 │     └─ pages/            # 首页、比赛、排行榜、个人页、管理页
 ├─ docs/                   # 架构、安全、测试、演示说明
 ├─ DECISIONS.md            # 关键技术取舍
-└─ GOALPROOF_DEVELOPMENT_SPEC.md  # 原始课程项目设计规格
+└─ docs/archive/GOALPROOF_DEVELOPMENT_SPEC.md  # 原始课程项目设计规格（归档）
 ```
 
 生成目录如 `node_modules/`、`frontend/dist/`、`coverage/`、`types/`、`artifacts/` 都已放进 `.gitignore`，不需要提交。
+
+说明：`docs/archive/GOALPROOF_DEVELOPMENT_SPEC.md` 是开发前的原始长规格，给需要追溯需求的人看；小组成员上手时优先读本 README。
 
 ## 第一次运行：本地完整启动
 
