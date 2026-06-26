@@ -4,7 +4,7 @@ import { useAccount, useWaitForTransactionReceipt, useWriteContract } from "wagm
 import { goalProofAbi } from "../abi";
 import { configuredChainId, goalProofAddress } from "../config/deployment";
 import { analyzePredictionReason, buildPostMatchReview } from "../lib/aiReason";
-import { isBytes32 } from "../lib/commitment";
+import { computePredictionCommitment, isBytes32 } from "../lib/commitment";
 import { WRITE_GAS_LIMITS } from "../lib/gas";
 import {
   exportSecret,
@@ -16,12 +16,14 @@ import { TransactionStatus } from "./TransactionStatus";
 
 export function RevealPanel({
   matchId,
+  chainCommitment,
   chainReasonHash,
   actualHomeScore,
   actualAwayScore,
   onConfirmed
 }: {
   matchId: bigint;
+  chainCommitment?: Hex;
   chainReasonHash?: Hex;
   actualHomeScore?: number;
   actualAwayScore?: number;
@@ -38,6 +40,29 @@ export function RevealPanel({
   const { writeContractAsync, data: hash, isPending, error } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash, query: { enabled: Boolean(hash) } });
   const confirmationNotified = useRef(false);
+  const hasOnChainCommitment = Boolean(chainCommitment);
+  const recomputedCommitment =
+    address && isBytes32(salt)
+      ? computePredictionCommitment({
+          chainId: configuredChainId,
+          contractAddress: goalProofAddress,
+          userAddress: address,
+          matchId,
+          predictedHomeScore: home,
+          predictedAwayScore: away,
+          salt
+        })
+      : undefined;
+  const commitmentMatches = Boolean(
+    chainCommitment &&
+    recomputedCommitment &&
+    chainCommitment.toLowerCase() === recomputedCommitment.toLowerCase()
+  );
+  const localRecoveryLooksStale = Boolean(
+    secret?.commitment &&
+    chainCommitment &&
+    secret.commitment.toLowerCase() !== chainCommitment.toLowerCase()
+  );
   const reasonAnalysis = secret?.reason ? analyzePredictionReason(secret.reason, home, away) : null;
   const reasonHashMatches = Boolean(
     secret?.reasonHash &&
@@ -93,7 +118,20 @@ export function RevealPanel({
   }
 
   async function reveal() {
+    if (!hasOnChainCommitment) {
+      return setLocalError(
+        new Error(
+          "链上没有找到当前钱包对这场比赛的预测承诺。请确认是否切到了提交预测的钱包，或本地链是否重启后尚未重新提交 Commit。"
+        )
+      );
+    }
     if (!isBytes32(salt)) return setLocalError(new Error("请输入 32 字节的 0x salt。"));
+    if (!address) return setLocalError(new Error("请先连接钱包。"));
+    if (!commitmentMatches) {
+      return setLocalError(
+        new Error("当前比分和 salt 无法重现链上的 commitment，请导入正确恢复文件或检查比分。")
+      );
+    }
     try {
       setLocalError(undefined);
       await writeContractAsync({
@@ -149,6 +187,30 @@ export function RevealPanel({
           placeholder="0x…64 hex characters"
         />
       </label>
+      {!hasOnChainCommitment && (
+        <div className="warning-box">
+          <strong>链上未找到承诺</strong>
+          <span>
+            当前钱包没有为这场比赛提交过预测。你看到的 salt
+            可能来自旧本地链、旧部署、旧钱包或未成功的 Commit 交易，因此不能直接 Reveal。
+          </span>
+        </div>
+      )}
+      {hasOnChainCommitment && localRecoveryLooksStale && (
+        <div className="warning-box">
+          <strong>恢复记录不匹配</strong>
+          <span>
+            本地恢复文件里的 commitment
+            与链上记录不同。通常是导入了旧恢复文件，或本地链重启后重新部署过合约。
+          </span>
+        </div>
+      )}
+      {hasOnChainCommitment && isBytes32(salt) && !commitmentMatches && (
+        <div className="warning-box">
+          <strong>哈希校验未通过</strong>
+          <span>当前填写的比分和 salt 不能重现链上 commitment，请检查比分或导入正确恢复文件。</span>
+        </div>
+      )}
       {secret?.reason && reasonAnalysis && (
         <div className="ai-reason-card">
           <div>
@@ -181,7 +243,7 @@ export function RevealPanel({
       </div>
       <button
         className="button button-primary button-wide"
-        disabled={isPending || receipt.isLoading}
+        disabled={isPending || receipt.isLoading || !hasOnChainCommitment || !commitmentMatches}
         onClick={reveal}
       >
         验证承诺并公开

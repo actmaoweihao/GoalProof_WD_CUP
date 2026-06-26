@@ -1,6 +1,8 @@
 const FRIENDLY_ERRORS: Record<string, string> = {
   CommitPeriodClosed: "预测提交截止时间已过。",
   PredictionAlreadyCommitted: "这个钱包已经为该比赛提交过预测。",
+  PredictionNotCommitted:
+    "链上没有找到当前钱包对这场比赛的预测承诺。请确认钱包、比赛和本地链部署是否一致。",
   CommitmentMismatch: "比分或恢复 salt 与原始承诺不匹配。",
   ResultNotSubmitted: "预言机尚未提交比赛结果。",
   RevealPeriodClosed: "公开预测的截止时间已过。",

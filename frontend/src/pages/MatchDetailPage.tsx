@@ -99,6 +99,7 @@ export function MatchDetailPage() {
         <RevealPanel
           key={`${address}-${matchId}-reveal`}
           matchId={matchId}
+          chainCommitment={hasCommitment ? prediction?.commitment : undefined}
           chainReasonHash={prediction?.reasonHash}
           actualHomeScore={match.resultSubmitted ? match.actualHomeScore : undefined}
           actualAwayScore={match.resultSubmitted ? match.actualAwayScore : undefined}

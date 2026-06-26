@@ -6,6 +6,7 @@ describe("error mapping", () => {
     expect(getErrorMessage(new Error("execution reverted: CommitmentMismatch()"))).toContain(
       "salt"
     );
+    expect(getErrorMessage(new Error("PredictionNotCommitted(1, 0xabc)"))).toContain("没有找到");
   });
 
   it("preserves raw technical details", () => {
