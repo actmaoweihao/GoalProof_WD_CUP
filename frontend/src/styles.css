@@ -457,6 +457,116 @@ pre {
   font-size: 13px;
   line-height: 1.5;
 }
+.flow-guide {
+  margin-top: 36px;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 0 0, rgba(199, 255, 74, 0.1), transparent 28%), rgba(13, 28, 24, 0.74);
+  border: 1px solid rgba(199, 255, 74, 0.18);
+}
+.flow-guide-compact {
+  margin: 0 0 30px;
+  padding: 22px;
+}
+.flow-guide-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+.flow-guide h2 {
+  margin: 8px 0 0;
+  font-size: 24px;
+  letter-spacing: -0.035em;
+}
+.flow-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.flow-guide-compact .flow-steps {
+  grid-template-columns: repeat(4, 1fr);
+}
+.flow-step {
+  display: flex;
+  gap: 12px;
+  min-height: 128px;
+  padding: 16px;
+  background: rgba(7, 17, 15, 0.68);
+  border: 1px solid rgba(188, 234, 207, 0.1);
+  transition:
+    transform 0.18s,
+    border 0.18s;
+}
+.flow-step:hover {
+  border-color: rgba(199, 255, 74, 0.3);
+  transform: translateY(-2px);
+}
+.flow-step i {
+  display: grid;
+  place-items: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  color: #07110f;
+  background: var(--acid);
+  border-radius: 50%;
+  font: normal 10px "DM Mono";
+}
+.flow-step span {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flow-step strong {
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.flow-step small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+.flow-step.is-done i {
+  background: var(--mint);
+}
+.flow-step.is-active {
+  border-color: rgba(255, 179, 107, 0.35);
+}
+.flow-step.is-active i {
+  background: #ffb36b;
+}
+.flow-step.is-locked {
+  opacity: 0.5;
+}
+.next-action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: -22px auto 34px;
+  padding: 22px 24px;
+  background:
+    linear-gradient(90deg, rgba(199, 255, 74, 0.13), rgba(98, 226, 173, 0.05)), var(--surface);
+  border: 1px solid rgba(199, 255, 74, 0.2);
+}
+.next-action-card h2 {
+  margin: 7px 0;
+  font-size: 22px;
+}
+.next-action-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.next-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 0 0 auto;
+}
 .featured-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
@@ -1283,6 +1393,8 @@ footer code {
   .steps,
   .thesis-strip,
   .comparison-grid,
+  .flow-steps,
+  .flow-guide-compact .flow-steps,
   .featured-grid,
   .admin-grid {
     grid-template-columns: 1fr;
@@ -1333,6 +1445,11 @@ footer code {
   }
   .action-panel {
     padding: 26px 20px;
+  }
+  .next-action-card {
+    align-items: start;
+    flex-direction: column;
+    margin-top: -8px;
   }
   .commitment-receipt {
     grid-template-columns: 1fr;

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FlowGuide } from "../components/FlowGuide";
 import { MatchCard } from "../components/MatchCard";
 
 export function HomePage() {
@@ -77,6 +78,35 @@ export function HomePage() {
           <p>系统不接收 ETH、不发币、不设奖池，只沉淀可验证的预测履历。</p>
         </article>
       </section>
+      <FlowGuide
+        eyebrow="DEMO ROUTE"
+        title="第一次使用，按这 5 步走就不会迷路"
+        steps={[
+          {
+            title: "管理员准备比赛",
+            description: "本地链启动后，在管理页创建演示比赛或提交赛果。",
+            to: "/admin"
+          },
+          {
+            title: "普通用户选比赛",
+            description: "去比赛页，选择仍在 Commit 阶段的比赛。",
+            to: "/matches"
+          },
+          {
+            title: "提交预测",
+            description: "输入比分和理由，钱包确认后链上只保存哈希。"
+          },
+          {
+            title: "等待赛果",
+            description: "比赛开赛后，由预言机在管理页提交最终比分。",
+            to: "/admin"
+          },
+          {
+            title: "公开并拿证明",
+            description: "Reveal 成功后查看得分、排行榜和 Proof Passport。"
+          }
+        ]}
+      />
       <section className="method" id="method">
         <div className="section-heading">
           <div>

@@ -9,6 +9,7 @@ import {
 } from "wagmi";
 import { goalProofAbi } from "../abi";
 import { goalProofAddress } from "../config/deployment";
+import { FlowGuide } from "../components/FlowGuide";
 import { TransactionStatus } from "../components/TransactionStatus";
 import { WRITE_GAS_LIMITS, type GasLimitedWrite } from "../lib/gas";
 
@@ -142,6 +143,30 @@ export function AdminPage() {
           <span className={roles[2] ? "active" : ""}>暂停员 {roles[2] ? "✓" : "—"}</span>
         </div>
       )}
+      <FlowGuide
+        compact
+        eyebrow="OPERATOR FLOW"
+        title="演示者流程：先创建比赛，用户 Commit 后再提交赛果"
+        steps={[
+          {
+            title: "检查角色",
+            description: "顶部显示比赛管理员/预言机为 ✓ 才能执行对应操作。",
+            state: roles[0] || roles[1] ? "done" : "active"
+          },
+          {
+            title: "创建比赛",
+            description: "设置未来时间：承诺截止 < 开赛时间 < 公开截止。"
+          },
+          {
+            title: "让用户预测",
+            description: "切到普通用户钱包，去比赛详情页完成 Commit。"
+          },
+          {
+            title: "提交赛果",
+            description: "比赛开赛后用预言机角色提交最终比分，再让用户 Reveal。"
+          }
+        ]}
+      />
       <div className="admin-grid">
         <section className="admin-card">
           <div className="eyebrow">CREATE MATCH</div>
