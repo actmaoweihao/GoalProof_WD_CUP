@@ -20,6 +20,6 @@ describe("App smoke", () => {
       </WagmiProvider>
     );
 
-    expect(await screen.findByRole("heading", { name: /先证明你猜过/ })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: /让预测不能/ })).toBeInTheDocument();
   });
 });

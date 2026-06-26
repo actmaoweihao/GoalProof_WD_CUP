@@ -13,6 +13,7 @@ flowchart LR
   Frontend -->|保存 salt 和恢复文件| Local[(浏览器 localStorage)]
   Frontend -->|本地分析预测理由| AI[Local AI Reason Analyzer]
   AI -->|reasonHash| Contract
+  Frontend -->|Reveal 后生成| Passport[Proof Passport]
   Contract -->|ScoreAwarded / PredictionRevealed| Board[前端排行榜聚合]
 ```
 
@@ -23,6 +24,7 @@ flowchart LR
 - 排行榜不在合约内排序，避免链上循环和高 gas。
 - 预测 salt 和明文预测理由只保存在用户浏览器本地，永远不在 commit 阶段上链。
 - AI 理由分析完全在前端本地运行，不依赖外部模型 API；链上只保存 `reasonHash` 用于证明理由赛前存在。
+- Proof Passport 是前端根据链上预测、赛果、commitment、reasonHash 和本地恢复文件生成的展示凭证，不是新的中心化数据库。
 
 ## 合约边界
 
@@ -63,6 +65,7 @@ sequenceDiagram
     F->>C: revealPrediction(score, salt)
     C->>C: 验证 commitment 并计分
     C-->>F: 事件和总分可被读取
+    F->>F: 生成 Proof Passport 证明卡
 ```
 
 commitment 公式：
@@ -99,17 +102,27 @@ keccak256(
 
 `normalizedReason` 是去掉首尾空格、合并连续空白后的预测理由。它不会在 commit 阶段上链，只有哈希会被记录。Reveal 阶段前端可以把恢复文件里的明文理由重新哈希，并与链上 `reasonHash` 对比。
 
+## AI 与 Proof Passport
+
+本项目的 AI 层刻意保持本地化和可解释，不调用外部模型 API。它做三件事：
+
+- 提交前：把预测理由整理为标签、风险等级、反方质询和复盘焦点。
+- Reveal 后：根据真实赛果生成赛后复盘，指出方向命中、比分偏差或判断失误。
+- 展示层：在 Proof Passport 中把 AI 复盘和链上证据放在一起，形成一张可截图展示的声誉凭证。
+
+Proof Passport 不改变合约状态，也不引入新信任方。它的可信部分来自链上的 commitment、reasonHash、reveal 结果和计分；本地恢复文件只用于展示明文理由和复盘文本。
+
 ## 前端模块
 
 ```text
 frontend/src/
 ├─ abi/                  # 合约 ABI
-├─ components/           # 钱包、交易状态、Commit/Reveal 面板
+├─ components/           # 钱包、交易状态、Commit/Reveal 面板、Proof Passport
 ├─ config/               # 链 ID、RPC、合约地址、wagmi 配置
 ├─ hooks/                # 读取比赛、排行榜、个人历史
 ├─ lib/
 │  ├─ commitment.ts      # commitment 编码和 salt 生成
-│  ├─ aiReason.ts        # 本地 AI 风格理由分析、reasonHash、赛后复盘
+│  ├─ aiReason.ts        # 本地 AI 风格理由分析、反方质询、reasonHash、赛后复盘
 │  ├─ saltStorage.ts     # 本地 salt 保存、导出、导入
 │  ├─ phases.ts          # 比赛阶段判断
 │  ├─ leaderboard.ts     # 事件聚合排行榜

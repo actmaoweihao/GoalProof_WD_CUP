@@ -66,10 +66,11 @@ pnpm contracts:gas
 - [ ] 没权限的钱包不能创建比赛。
 - [ ] 用户能在 commit 阶段提交预测。
 - [ ] commit 交易里只出现 commitment 和 reasonHash，不出现明文比分或明文理由。
-- [ ] AI 理由卡片能显示标签、风险等级和赛后复盘。
+- [ ] AI 理由卡片能显示标签、风险等级、反方质询和赛后复盘。
 - [ ] salt 恢复文件能导出。
 - [ ] 推进时间后，预言机能提交赛果。
 - [ ] 用户能 reveal，且 exact score 得 5 分。
+- [ ] Reveal 后能显示 Proof Passport，包含预测者、预测/真实比分、链上 commitment、reasonHash 和 AI 复盘。
 - [ ] 猜中胜平负但比分不完全一致得 3 分。
 - [ ] 排行榜能根据事件更新。
 - [ ] 本地链重启后，前端能提示合约不存在，需要重新部署。

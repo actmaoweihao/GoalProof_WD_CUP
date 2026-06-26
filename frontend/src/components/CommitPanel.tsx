@@ -144,7 +144,10 @@ export function CommitPanel({
           ))}
           <span>风险：{analysis.riskLevel}</span>
         </div>
-        {analysis.cautions.length > 0 && <small>{analysis.cautions[0]}</small>}
+        <div className="ai-critique">
+          <small>{analysis.counterpoint}</small>
+          <small>{analysis.reviewFocus}</small>
+        </div>
       </div>
       <div className="warning-box">
         <strong>保管提醒</strong>

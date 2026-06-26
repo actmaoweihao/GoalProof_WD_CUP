@@ -358,7 +358,9 @@ pre {
   }
 }
 
+.thesis-strip,
 .method,
+.comparison-section,
 .page-section {
   padding-top: 82px;
 }
@@ -406,6 +408,54 @@ pre {
   color: var(--muted);
   line-height: 1.7;
   font-size: 13px;
+}
+.thesis-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.thesis-strip article {
+  min-height: 190px;
+  padding: 28px;
+  background: linear-gradient(160deg, rgba(199, 255, 74, 0.055), transparent 55%), #091512;
+}
+.thesis-strip span,
+.comparison-grid span {
+  color: var(--mint);
+  font: 10px "DM Mono";
+  letter-spacing: 0.16em;
+}
+.thesis-strip strong {
+  display: block;
+  margin: 18px 0 12px;
+  font-size: 20px;
+  line-height: 1.25;
+}
+.thesis-strip p,
+.comparison-grid p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.comparison-grid article {
+  min-height: 210px;
+  padding: 22px;
+  background: rgba(13, 28, 24, 0.72);
+  border: 1px solid var(--line);
+}
+.comparison-grid strong {
+  display: block;
+  margin-top: 18px;
+  color: var(--acid);
+  font-size: 13px;
+  line-height: 1.5;
 }
 .featured-grid {
   display: grid;
@@ -734,6 +784,13 @@ pre {
   font-size: 11px;
   line-height: 1.65;
 }
+.ai-critique {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(188, 234, 207, 0.14);
+}
 .ai-badge,
 .tag-row span {
   display: inline-flex;
@@ -854,6 +911,126 @@ pre {
 }
 .result-celebration p {
   color: var(--muted);
+}
+.proof-passport {
+  position: relative;
+  overflow: hidden;
+  margin-top: 20px;
+  padding: 34px;
+  background:
+    radial-gradient(circle at 90% 5%, rgba(199, 255, 74, 0.18), transparent 34%),
+    linear-gradient(145deg, rgba(18, 39, 34, 0.92), rgba(7, 17, 15, 0.96));
+  border: 1px solid rgba(199, 255, 74, 0.22);
+}
+.proof-passport::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  pointer-events: none;
+  border: 1px dashed rgba(199, 255, 74, 0.14);
+}
+.passport-stamp {
+  position: absolute;
+  top: 28px;
+  right: -34px;
+  width: 170px;
+  padding: 8px 0;
+  color: #07110f;
+  background: var(--acid);
+  text-align: center;
+  font: 800 10px "DM Mono";
+  letter-spacing: 0.18em;
+  transform: rotate(28deg);
+}
+.passport-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+.passport-head h2 {
+  margin: 9px 0;
+  font-size: 31px;
+}
+.passport-head p {
+  max-width: 640px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.passport-score {
+  min-width: 150px;
+  align-self: start;
+  padding: 18px;
+  text-align: right;
+  border: 1px solid rgba(199, 255, 74, 0.18);
+  background: rgba(199, 255, 74, 0.06);
+}
+.passport-score span,
+.passport-grid span,
+.passport-proof-lines span {
+  color: var(--muted);
+  font: 9px "DM Mono";
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.passport-score strong {
+  display: block;
+  color: var(--acid);
+  font-size: 44px;
+}
+.passport-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin-bottom: 18px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.passport-grid article {
+  min-height: 128px;
+  padding: 18px;
+  background: rgba(7, 17, 15, 0.82);
+}
+.passport-grid strong {
+  display: block;
+  margin: 10px 0 8px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+.passport-grid code,
+.passport-proof-lines code {
+  color: var(--mint);
+  overflow-wrap: anywhere;
+  font-size: 9px;
+}
+.passport-proof-lines {
+  display: grid;
+  gap: 10px;
+}
+.passport-proof-lines div {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 14px;
+  background: rgba(7, 17, 15, 0.62);
+  border: 1px solid rgba(188, 234, 207, 0.09);
+}
+.passport-ai {
+  margin-top: 18px;
+  padding: 18px;
+  background: rgba(98, 226, 173, 0.06);
+  border: 1px solid rgba(98, 226, 173, 0.16);
+}
+.passport-ai p {
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.passport-ai small {
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .leaderboard-card {
@@ -1104,6 +1281,8 @@ footer code {
     width: min(390px, 82vw);
   }
   .steps,
+  .thesis-strip,
+  .comparison-grid,
   .featured-grid,
   .admin-grid {
     grid-template-columns: 1fr;
@@ -1156,6 +1335,15 @@ footer code {
     padding: 26px 20px;
   }
   .commitment-receipt {
+    grid-template-columns: 1fr;
+  }
+  .passport-head {
+    flex-direction: column;
+  }
+  .passport-grid {
+    grid-template-columns: 1fr;
+  }
+  .passport-proof-lines div {
     grid-template-columns: 1fr;
   }
   .table-head,

@@ -164,7 +164,10 @@ export function RevealPanel({
               {reasonHashMatches ? "理由哈希匹配链上记录" : "未确认链上理由哈希"}
             </span>
           </div>
-          {review && <small>{review}</small>}
+          <div className="ai-critique">
+            <small>{reasonAnalysis.reviewFocus}</small>
+            {review && <small>{review}</small>}
+          </div>
         </div>
       )}
       <div className="button-row">

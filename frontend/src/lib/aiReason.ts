@@ -9,6 +9,8 @@ export type ReasonAnalysis = {
   summary: string;
   signals: string[];
   cautions: string[];
+  counterpoint: string;
+  reviewFocus: string;
 };
 
 export type ReasonHashInput = {
@@ -82,6 +84,8 @@ export function analyzePredictionReason(
     !tags.includes("防守质量") ? "理由里较少提到防守变量，可能低估失球风险。" : "",
     !tags.includes("伤病停赛") ? "未明确考虑伤病/停赛信息，真实比赛中这是高影响变量。" : ""
   ].filter(Boolean);
+  const counterpoint = buildCounterpoint(tags, riskLevel);
+  const reviewFocus = buildReviewFocus(tags);
 
   return {
     normalizedReason,
@@ -91,8 +95,34 @@ export function analyzePredictionReason(
       ? `AI 将这段理由归纳为：${tags.slice(0, 4).join("、")}；整体属于${riskLevel}型判断。`
       : "写下预测理由后，AI 会把它整理成可复盘的判断标签。",
     signals,
-    cautions
+    cautions,
+    counterpoint,
+    reviewFocus
   };
+}
+
+function buildCounterpoint(tags: string[], riskLevel: ReasonRiskLevel) {
+  if (tags.includes("进攻状态") && !tags.includes("防守质量")) {
+    return "反方质询：进攻优势不一定能转化为比分优势，如果对手低位防守或门将发挥出色，预测可能被压缩。";
+  }
+  if (tags.includes("伤病停赛")) {
+    return "反方质询：伤病信息影响很大，但市场和球队战术通常会提前调整，不能只按缺阵名单线性推断结果。";
+  }
+  if (tags.includes("历史交锋")) {
+    return "反方质询：历史交锋样本可能已经过期，阵容、教练和比赛阶段变化会削弱往绩参考价值。";
+  }
+  if (riskLevel === "激进") {
+    return "反方质询：大比分或强倾向判断更容易受单个红牌、点球或早段进球影响，需要准备赛后反例解释。";
+  }
+  return "反方质询：这条理由较均衡，但仍需要说明哪个关键变量最可能推翻你的判断。";
+}
+
+function buildReviewFocus(tags: string[]) {
+  if (tags.includes("进攻状态")) return "赛后重点复盘射门质量、转化率和关键机会数量。";
+  if (tags.includes("防守质量")) return "赛后重点复盘失球来源、防线站位和门将表现。";
+  if (tags.includes("伤病停赛")) return "赛后重点复盘替补球员和阵容调整是否改变了预期。";
+  if (tags.includes("战术风格")) return "赛后重点复盘控球、反击和阵型变化是否符合赛前判断。";
+  return "赛后重点复盘预测理由中最核心的一条依据是否真的发生。";
 }
 
 export function buildPostMatchReview({

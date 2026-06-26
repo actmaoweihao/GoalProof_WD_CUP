@@ -2,19 +2,42 @@ import { Link } from "react-router-dom";
 import { MatchCard } from "../components/MatchCard";
 
 export function HomePage() {
+  const comparison = [
+    {
+      name: "公开预测",
+      limitation: "答案提前泄露，容易被抄袭或影响他人判断。",
+      improvement: "先上链哈希，赛后再公开。"
+    },
+    {
+      name: "中心化平台",
+      limitation: "用户必须相信平台不会改时间戳或改内容。",
+      improvement: "承诺时间由区块链记录。"
+    },
+    {
+      name: "普通 AI 预测",
+      limitation: "理由写得漂亮，但难证明不是赛后补写。",
+      improvement: "理由哈希 reasonHash 赛前上链。"
+    },
+    {
+      name: "押金/投注机制",
+      limitation: "激励强，但容易引入资金、赔率和合规风险。",
+      improvement: "只做非金融声誉分。"
+    }
+  ];
+
   return (
     <>
       <section className="hero">
         <div>
-          <div className="eyebrow">WORLD CUP · ON-CHAIN REPUTATION</div>
+          <div className="eyebrow">AI ERA · VERIFIABLE PREDICTION REPUTATION</div>
           <h1>
-            先证明你猜过，
+            让预测不能
             <br />
-            <em>再公开你猜对。</em>
+            <em>事后改口。</em>
           </h1>
           <p>
-            GoalProof 用 commit–reveal
-            证明预测存在于开赛之前：不泄露答案，也不依赖中心化组织者保存记录。
+            GoalProof 把“赛前预测、理由和赛后验证”变成可验证声誉：AI
+            帮助质询和复盘，区块链证明预测确实在事件发生前存在。
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" to="/matches">
@@ -37,11 +60,28 @@ export function HomePage() {
           <span className="orbit-label label-c">SCORE</span>
         </div>
       </section>
+      <section className="thesis-strip">
+        <article>
+          <span>WHY</span>
+          <strong>预测越来越便宜，可信预测越来越稀缺。</strong>
+          <p>AI、KOL、专家都能快速生成判断，但删帖、改口、赛后补理由很难被追责。</p>
+        </article>
+        <article>
+          <span>HOW</span>
+          <strong>隐藏答案，公开证据。</strong>
+          <p>Commit 阶段只上链 commitment 和 reasonHash；Reveal 后合约验证并自动计分。</p>
+        </article>
+        <article>
+          <span>SO WHAT</span>
+          <strong>不是押注，是声誉。</strong>
+          <p>系统不接收 ETH、不发币、不设奖池，只沉淀可验证的预测履历。</p>
+        </article>
+      </section>
       <section className="method" id="method">
         <div className="section-heading">
           <div>
             <div className="eyebrow">HOW IT WORKS</div>
-            <h2>三步，留下不可篡改的判断</h2>
+            <h2>三步，把判断变成证据</h2>
           </div>
           <Link className="text-link" to="/matches">
             查看所有比赛 →
@@ -51,18 +91,35 @@ export function HomePage() {
           <article>
             <span>01</span>
             <h3>承诺 Commit</h3>
-            <p>浏览器生成随机 salt，把比分编码为哈希后写入区块。</p>
+            <p>浏览器生成 salt，把比分和预测理由分别编码为链上哈希。</p>
           </article>
           <article>
             <span>02</span>
-            <h3>赛果 Result</h3>
-            <p>获授权的预言机在开赛后提交不可修改的最终比分。</p>
+            <h3>质询 Challenge</h3>
+            <p>本地 AI 给出标签、风险和反方观点，让预测赛后可复盘。</p>
           </article>
           <article>
             <span>03</span>
             <h3>公开 Reveal</h3>
-            <p>原比分与 salt 重现哈希，合约立即验证并自动计分。</p>
+            <p>赛果发布后公开比分和 salt，合约验证、计分并生成证明卡。</p>
           </article>
+        </div>
+      </section>
+      <section className="comparison-section">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow">PRIOR LIMITATIONS</div>
+            <h2>前人方案解决了一部分问题，但没有解决“赛前可验证判断”</h2>
+          </div>
+        </div>
+        <div className="comparison-grid">
+          {comparison.map((item) => (
+            <article key={item.name}>
+              <span>{item.name}</span>
+              <p>{item.limitation}</p>
+              <strong>{item.improvement}</strong>
+            </article>
+          ))}
         </div>
       </section>
       <section>
@@ -76,9 +133,9 @@ export function HomePage() {
           <MatchCard matchId={1n} />
           <div className="chain-note">
             <span>链上承诺</span>
-            <strong>只有哈希，没有答案。</strong>
-            <p>别人能看到你在截止前留下了证据，却无法从交易里还原比分。</p>
-            <code>keccak256(abi.encode(...))</code>
+            <strong>只有哈希，没有答案，也没有明文理由。</strong>
+            <p>别人能看到你在截止前留下了证据，却无法从交易里还原比分或预测逻辑。</p>
+            <code>commitment + reasonHash</code>
           </div>
         </div>
       </section>

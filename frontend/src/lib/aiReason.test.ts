@@ -39,6 +39,8 @@ describe("AI prediction reason helpers", () => {
       expect.arrayContaining(["进攻状态", "防守质量", "伤病停赛", "历史交锋"])
     );
     expect(analysis.riskLevel).toBe("均衡");
+    expect(analysis.counterpoint).toContain("伤病信息");
+    expect(analysis.reviewFocus).toContain("射门质量");
   });
 
   it("builds a post-match review from actual scores", () => {

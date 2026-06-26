@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { CommitPanel } from "../components/CommitPanel";
+import { ProofPassport } from "../components/ProofPassport";
 import { RevealPanel } from "../components/RevealPanel";
 import { useMatch } from "../hooks/useMatch";
 import { formatKickoff, shortAddress } from "../lib/format";
@@ -105,14 +106,22 @@ export function MatchDetailPage() {
         />
       )}
       {prediction?.revealed && (
-        <div className="result-celebration">
-          <span>SETTLED ON-CHAIN</span>
-          <strong>+{prediction.pointsAwarded}</strong>
-          <h2>
-            {prediction.predictedHomeScore}–{prediction.predictedAwayScore} 已验证
-          </h2>
-          <p>这次预测已写入你的 GoalProof 声誉记录。</p>
-        </div>
+        <>
+          <div className="result-celebration">
+            <span>SETTLED ON-CHAIN</span>
+            <strong>+{prediction.pointsAwarded}</strong>
+            <h2>
+              {prediction.predictedHomeScore}–{prediction.predictedAwayScore} 已验证
+            </h2>
+            <p>这次预测已写入你的 GoalProof 声誉记录。</p>
+          </div>
+          <ProofPassport
+            matchId={matchId}
+            match={match}
+            prediction={prediction}
+            address={address}
+          />
+        </>
       )}
       {phase === "WAITING_FOR_KICKOFF" && (
         <div className="empty-state">承诺窗口已关闭，等待比赛开赛。</div>
