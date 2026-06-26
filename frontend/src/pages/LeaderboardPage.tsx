@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ActionHint } from "../components/ActionHint";
 import { useLeaderboard } from "../hooks/useLeaderboard";
 import { shortAddress } from "../lib/format";
 
@@ -21,9 +22,21 @@ export function LeaderboardPage() {
           <span>总分</span>
         </div>
         {isLoading && <div className="empty-row">正在索引链上事件…</div>}
-        {error && <div className="empty-row">暂时无法读取事件。</div>}
+        {error && (
+          <ActionHint
+            tone="error"
+            title="暂时无法读取事件"
+            description="请确认本地链、合约地址和当前网络一致。排行榜依赖链上事件。"
+            primary={{ label: "回比赛页", to: "/matches" }}
+          />
+        )}
         {!isLoading && !error && data.length === 0 && (
-          <div className="empty-row">还没有已公开的预测。</div>
+          <ActionHint
+            title="还没有已公开的预测"
+            description="排行榜只统计已经 Reveal 并结算的预测。先完成一次 Commit → Result → Reveal 流程。"
+            primary={{ label: "去比赛页开始", to: "/matches" }}
+            secondary={{ label: "演示者去管理页", to: "/admin" }}
+          />
         )}
         {data.map((row) => (
           <Link

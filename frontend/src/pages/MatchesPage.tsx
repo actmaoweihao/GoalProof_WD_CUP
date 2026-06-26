@@ -1,5 +1,6 @@
 import { useReadContract } from "wagmi";
 import { goalProofAbi } from "../abi";
+import { ActionHint } from "../components/ActionHint";
 import { FlowGuide } from "../components/FlowGuide";
 import { MatchCard } from "../components/MatchCard";
 import { goalProofAddress } from "../config/deployment";
@@ -45,12 +46,19 @@ export function MatchesPage() {
       />
       {isLoading && <div className="empty-state">正在读取链上比赛…</div>}
       {error && (
-        <div className="empty-state error-state">
-          无法读取合约。请确认本地节点、网络和部署地址。
-        </div>
+        <ActionHint
+          tone="error"
+          title="无法读取比赛"
+          description="请确认 Hardhat 本地节点正在运行，MetaMask 已切到 Hardhat Local，并且合约已经部署。"
+          primary={{ label: "去管理页检查", to: "/admin" }}
+        />
       )}
       {!isLoading && !error && count === 0 && (
-        <div className="empty-state">尚无比赛。请用管理员钱包在管理页创建演示比赛。</div>
+        <ActionHint
+          title="还没有比赛"
+          description="普通用户需要先有一场链上比赛才能预测。请用管理员钱包在管理页创建演示比赛。"
+          primary={{ label: "去管理页创建比赛", to: "/admin" }}
+        />
       )}
       <div className="match-grid">
         {Array.from({ length: count }, (_, index) => (

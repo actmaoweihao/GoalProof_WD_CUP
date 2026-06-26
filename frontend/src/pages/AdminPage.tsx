@@ -9,6 +9,7 @@ import {
 } from "wagmi";
 import { goalProofAbi } from "../abi";
 import { goalProofAddress } from "../config/deployment";
+import { ActionHint } from "../components/ActionHint";
 import { FlowGuide } from "../components/FlowGuide";
 import { TransactionStatus } from "../components/TransactionStatus";
 import { WRITE_GAS_LIMITS, type GasLimitedWrite } from "../lib/gas";
@@ -142,6 +143,13 @@ export function AdminPage() {
           <span className={roles[1] ? "active" : ""}>预言机 {roles[1] ? "✓" : "—"}</span>
           <span className={roles[2] ? "active" : ""}>暂停员 {roles[2] ? "✓" : "—"}</span>
         </div>
+      )}
+      {address && !roles[0] && !roles[1] && !roles[2] && (
+        <ActionHint
+          title="当前钱包没有管理权限"
+          description="这是正常情况：普通预测用户不需要管理权限。请去比赛页选择比赛并提交预测。"
+          primary={{ label: "去比赛页预测", to: "/matches" }}
+        />
       )}
       <FlowGuide
         compact

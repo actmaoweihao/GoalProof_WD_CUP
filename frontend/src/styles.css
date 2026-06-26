@@ -693,6 +693,42 @@ pre {
 .error-state {
   color: var(--danger);
 }
+.action-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  color: var(--muted);
+  background:
+    radial-gradient(circle at 100% 0, rgba(98, 226, 173, 0.11), transparent 35%),
+    rgba(13, 28, 24, 0.7);
+  border: 1px solid rgba(98, 226, 173, 0.16);
+}
+.leaderboard-card .action-hint {
+  margin: 0;
+  border-width: 0 0 1px;
+}
+.action-hint-error {
+  background: rgba(255, 130, 110, 0.08);
+  border-color: rgba(255, 130, 110, 0.22);
+}
+.action-hint strong {
+  display: block;
+  color: var(--ink);
+  font-size: 16px;
+}
+.action-hint p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.action-hint-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex: 0 0 auto;
+}
 
 .detail-page > .text-link {
   display: inline-block;
@@ -1450,6 +1486,10 @@ footer code {
     align-items: start;
     flex-direction: column;
     margin-top: -8px;
+  }
+  .action-hint {
+    align-items: start;
+    flex-direction: column;
   }
   .commitment-receipt {
     grid-template-columns: 1fr;

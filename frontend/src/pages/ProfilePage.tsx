@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { isAddress, type Address } from "viem";
 import { useAccount, useReadContracts } from "wagmi";
 import { goalProofAbi } from "../abi";
+import { ActionHint } from "../components/ActionHint";
 import { goalProofAddress } from "../config/deployment";
 import { useProfileHistory } from "../hooks/useProfileHistory";
 import { formatKickoff, shortAddress } from "../lib/format";
@@ -36,7 +37,18 @@ export function ProfilePage() {
     query: { enabled: Boolean(address) }
   });
   const { data: history = [], isLoading } = useProfileHistory(address);
-  if (!address) return <div className="empty-state">连接钱包，或从排行榜选择一个地址。</div>;
+  if (!address) {
+    return (
+      <section className="page-section">
+        <ActionHint
+          title="还不知道要看哪个钱包"
+          description="连接钱包后这里会显示你的预测声誉记录；也可以从排行榜点进别人的公开记录。"
+          primary={{ label: "去比赛页开始预测", to: "/matches" }}
+          secondary={{ label: "查看排行榜", to: "/leaderboard" }}
+        />
+      </section>
+    );
+  }
   const values = stats.data?.map((item) => Number(item.result ?? 0)) ?? [0, 0, 0];
   return (
     <section className="page-section">
@@ -71,7 +83,11 @@ export function ProfilePage() {
       <div className="history-list">
         {isLoading && <div className="empty-state">正在读取历史事件…</div>}
         {!isLoading && history.length === 0 && (
-          <div className="empty-state">这个钱包还没有提交预测。</div>
+          <ActionHint
+            title="这个钱包还没有提交预测"
+            description="先去比赛页选择一场可 Commit 的比赛。Reveal 成功后，这里会出现可验证的历史记录。"
+            primary={{ label: "去比赛页预测", to: "/matches" }}
+          />
         )}
         {history.map((item) => (
           <article key={item.matchId.toString()}>
